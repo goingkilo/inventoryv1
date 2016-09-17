@@ -1,0 +1,20 @@
+database:
+ driverClass: org.postgresql.Driver
+ user: monocle_user
+ password: password
+ url: jdbc:postgresql://localhost:5432/monocle
+ properties:
+  charSet: UTF-8
+  hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  hibernate.hbm2ddl.auto: update
+  #hibernate.show_sql: true
+ maxWaitForConnection: 1s
+ validationQuery: "/* MyApplication Health Check */ SELECT 1"
+ minSize: 8
+ maxSize: 32
+ checkConnectionWhileIdle: false
+
+viewRendererConfiguration:
+ .ftl:
+  strict_syntax: yes
+  whitespace_stripping: yes
