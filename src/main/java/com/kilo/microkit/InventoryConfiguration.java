@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-public class FKInventoryConfiguration extends Configuration {
+public class InventoryConfiguration extends Configuration {
 
     @Valid
     @NotNull
