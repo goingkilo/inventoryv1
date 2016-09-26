@@ -7,10 +7,7 @@ import com.kilo.microkit.views.HelloView;
 import com.kilo.microkit.views.ItemsView;
 import io.dropwizard.hibernate.UnitOfWork;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
@@ -45,6 +42,8 @@ public class InventoryResource {
     @UnitOfWork
     public ItemsView search(@PathParam("searchTerm") String searchTerm) {
 
+        if( searchTerm == null ) searchTerm = "laptop";
+
         List<InventoryItem> ret = null;
         try {
             ret = inventoryDAO.getInventoryItems();
@@ -53,6 +52,23 @@ public class InventoryResource {
                 ret = FlipKart.search(client, searchTerm, 10);
                 inventoryDAO.saveMany(ret);
             }
+        }
+        catch (SocketTimeoutException e) {
+            e.printStackTrace();
+        }
+        return new ItemsView( ret );
+    }
+
+    @POST
+    @Path("/s1")
+    @Produces(MediaType.TEXT_HTML)
+    @UnitOfWork
+    public ItemsView searchP(@FormParam("searchTerm") String searchTerm) {
+
+        List<InventoryItem> ret = null;
+        try {
+            ret = FlipKart.search(client, searchTerm, 10);
+            inventoryDAO.saveMany(ret);
         }
         catch (SocketTimeoutException e) {
             e.printStackTrace();

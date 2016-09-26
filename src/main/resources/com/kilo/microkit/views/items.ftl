@@ -10,7 +10,6 @@
 
     <style>
 
-
         h1 {
             font-family: typewriter;
         }
@@ -25,8 +24,8 @@
 
         .form-group {
             text-align: center;
-            padding-bottom: 25px;
-
+            padding-bottom: 10px;
+            padding-top: 10px;
         }
 
         li {
@@ -38,9 +37,7 @@
         }
 
         .first-row {
-            background: #e6e6e6;
             margin-top: 4px;
-            border-radius: 25px;
         }
 
         .cols-sm-3 {
@@ -48,6 +45,17 @@
         }
         #my_date {
             float:right;
+        }
+
+        .table-x {
+            border : solid 1px grey;
+            padding:15px;
+        }
+        .table-y {
+            padding:15px;
+        }
+        td {
+            overflow:hidden;
         }
 
     </style>
@@ -83,79 +91,73 @@
 
 <div class="container">
 
-    <div class="row first-row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-            <form class="form-inline" action="/api/items/new" method="POST">
-                <div class="form-group">
-                    <label for="exampleInputName2">
-                        <h3>To-Do
-                            <small>List</small>
-                        </h3>
-                    </label>
-                    <input type="text" size="45" class="form-control" id="task" name="data"
-                           placeholder="world domination, get milk">
-                    <input type="hidden" class="form-control" id="owner" name="owner" value="wumen ekai">
-                    <button type="submit" class="btn btn-default">Note to self</button>
-                </div>
+    <div style="border:solid 1px #e6e6e6;"></div>
 
+    <div class="row first-row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-8">
+            <form class="form-inline" action="../../i/a/s1" method="POST">
+                <div class="form-group">
+                    <input type="text" size="45" class="form-control" id="task" name="searchTerm">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
             </form>
         </div>
-        <div class="col-sm-2"></div>
-    </div>
-
-    <div style="border : solid 1px #e6e6e6;;"></div>
-
-    <div>
-        goingkilo@gmail.com
-        <div id='my_date'></div>
+        <div class="col-sm-1"></div>
     </div>
 
     <div style="border : solid 1px #e6e6e6;;"></div>
 
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
+            1
         </div>
-        <div class="col-sm-3">
-
+        <div class="col-sm-4">
             <#list items as item>
-            <table>
+            <div class="table-y">
+                <div class="table-x">
+            <table class="tabe table-striped">
                 <tr>
-                        <td>
-                           <h5> ${item.title} </h5>
-                        </td>
-                </tr>
-                <tr>
-                        <td>
-                            <img src="${item.images[0]}" style="width:100px;height:100px"></img>
-                        </td>
-                </tr>
+                    <td>
+                       <h5>
+                           <div style="overflow:hidden">
+                                ${item.title}
+                           </div>
+                       </h5>
+                    </td>
+                    <td>
+                        <span style="font-weight:bold;" class="class="btn btn-success">
+                        &#x20B9 ${item.price}
+                        </span>
+                    </td>
 
-               
+                </tr>
                 <tr>
                     <div>
                         <td>
-                            <span style="font-weight:bold;" class="label label-warning">
-                            ${item.price}
-                            </span>
+                            <img src="${item.images[0]}" style="width:100px;height:100px"></img>
                         </td>
                         <td>
                             <button class="btn btn-default">
-                                <a href="${item.url}">BUY</a>
+                                <a href="${item.url}">See on Flipkart</a>
                             </button>
                         </td>
                     </div>
                 </tr>
                 <tr>
-
                 </tr>
             </table>
+                </div>
+            </div>
             </#list>
 
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
+        3
+
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
+        4
         </div>
     </div>
 </div>
