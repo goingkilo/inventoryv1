@@ -54,18 +54,20 @@ public class InventoryResource {
     @GET
     @Path("/categories")
     @UnitOfWork
-    public Set<String> get() {
+    public String[] get() {
 
         APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
         try {
 
             Map<String, String> categories = feeds.categories();
-            return categories.keySet();
+            String[] ret = categories.keySet().toArray( new String[]{});
+            Arrays.sort(ret);
+            return  ret;
 
         } catch (AffiliateAPIException e) {
             e.printStackTrace();
         }
-        return new HashSet<String>();
+        return new String[]{};
     }
 
     @POST
