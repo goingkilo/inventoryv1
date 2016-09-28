@@ -1,9 +1,10 @@
 package com.kilo.microkit.resources;
 
+import com.kilo.microkit.api.APIFeeds;
+import com.kilo.microkit.api.AffiliateAPIException;
 import com.kilo.microkit.api.dao.InventoryDAO;
 import com.kilo.microkit.api.model.InventoryItem;
 import com.kilo.microkit.api.util.FlipKart;
-import com.kilo.microkit.views.HelloView;
 import com.kilo.microkit.views.ItemsView;
 import io.dropwizard.hibernate.UnitOfWork;
 
@@ -11,7 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kraghunathan on 9/16/16.
@@ -29,29 +30,20 @@ public class InventoryResource {
     }
 
     @GET
-    @Path("/hello")
-    @Produces(MediaType.TEXT_HTML)
-    public HelloView hello() {
-
-        return new HelloView("Dis mesg");
-    }
-
-    @GET
-    @Path("/s/{searchTerm}")
+    @Path("/search/{searchTerm}")
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
     public ItemsView search(@PathParam("searchTerm") String searchTerm) {
 
-        if( searchTerm == null ) searchTerm = "laptop";
-
         List<InventoryItem> ret = null;
         try {
-            ret = inventoryDAO.getInventoryItems();
-
-            if( ret == null || ret.size() == 0  ) {
-                ret = FlipKart.search(client, searchTerm, 10);
-                inventoryDAO.saveMany(ret);
-            }
+            ret = FlipKart.search(client, searchTerm, 10);
+            Collections.sort(ret, new Comparator<InventoryItem>() {
+                @Override
+                public int compare(InventoryItem o1, InventoryItem o2) {
+                    return (int) (Float.parseFloat(o1.getPrice()) - Float.parseFloat(o2.getPrice()));
+                }
+            });
         }
         catch (SocketTimeoutException e) {
             e.printStackTrace();
@@ -59,8 +51,25 @@ public class InventoryResource {
         return new ItemsView( ret );
     }
 
+    @GET
+    @Path("/categories")
+    @UnitOfWork
+    public Set<String> get() {
+
+        APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
+        try {
+
+            Map<String, String> categories = feeds.categories();
+            return categories.keySet();
+
+        } catch (AffiliateAPIException e) {
+            e.printStackTrace();
+        }
+        return new HashSet<String>();
+    }
+
     @POST
-    @Path("/s1")
+    @Path("/s")
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
     public ItemsView searchP(@FormParam("searchTerm") String searchTerm) {
@@ -80,7 +89,7 @@ public class InventoryResource {
     @GET
     @Path("/load/{searchTerm}")
     @UnitOfWork
-    public int load(@PathParam("searchTerm") String searchTerm) {
+    public int loadLaptops(@PathParam("searchTerm") String searchTerm) {
 
         List<InventoryItem> ret = null;
         try {

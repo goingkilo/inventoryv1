@@ -16,41 +16,37 @@ import java.util.List;
  */
 public class FlipKart {
 
+	public static final String products = "https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json";
+	public static final String deals =    "https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json";
+	public static final String offers =   "https://affiliate-api.flipkart.net/affiliate/offers/v1/all/json";
+	public static final String search_product = "https://affiliate-api.flipkart.net/affiliate/product/json?id=";
+	public static final String search = "https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count";
+	public static final String  orders_report = "https://affiliate-api.flipkart.net/affiliate/report/orders/detail/json?startDate=yyyy-MM-dd&endDate=yyyy-MM-dd&status=<status>&offset=0";
 
 
-	public static final String FK_AFFILIATE_ID_KEY = "Fk-Affiliate-Id";
-	public static final String FK_AFFILIATE_ID_VAL = "goingkilo";
-	public static final String FK_AFFILIATE_TOKEN_KEY = "Fk-Affiliate-Token";
-	public static final String FK_AFFILIATE_TOKEN_VAL = "1368e5baaf8e4bcdb442873d4aa8ef6e";
+	public static List<InventoryItem> search(Client client, String searchTerm,  int count) throws SocketTimeoutException {
 
-	final static String search = "https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count";
-
-	public static String  get(Client client) {
-		return  client.target("https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json")
-				.request(MediaType.TEXT_PLAIN)
-				.header(FK_AFFILIATE_ID_KEY, FK_AFFILIATE_ID_VAL)
-				.header(FK_AFFILIATE_TOKEN_KEY, FK_AFFILIATE_TOKEN_VAL)
-				.get(String.class);
+		String s = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
+		return  parse(get(client, s, count));
 	}
 
-	public static List<InventoryItem> search(Client client, String searchTerm, int count) throws SocketTimeoutException {
+	public static String get(Client client, String query, int count) throws SocketTimeoutException {
+		String s = query;
 
-		String s = search.replace("searchTerm", searchTerm)
-                .replace("=Count", "=" + count);
 		System.out.println( "searching for : " + s);
-				//System.out.println(s);
+
 		try {
 			String json = client.target(s)
 					.request(MediaType.APPLICATION_JSON)
-					.header(FK_AFFILIATE_ID_KEY, FK_AFFILIATE_ID_VAL)
-					.header(FK_AFFILIATE_TOKEN_KEY, FK_AFFILIATE_TOKEN_VAL)
+					.header("Fk-Affiliate-Id", "goingkilo")
+					.header("Fk-Affiliate-Token", "1368e5baaf8e4bcdb442873d4aa8ef6e")
 					.get(String.class);
-			return parse(json);
+			return json ;
 		}
 		catch(RuntimeException e) {
 			System.out.println(" >>>>> ");
 		}
-		return new ArrayList<InventoryItem>();
+		return "";
 	}
 
 	static List<InventoryItem> parse(String json) {
@@ -79,38 +75,18 @@ public class FlipKart {
 				img[0] = item.findValue("unknown").asText();
 				p.setImages( img);
 
-//				out.println(p);
-//				out.println("-----------------------------");
 				ret.add(p);
 			}
 
 		}
 		catch(Exception e){
+			System.out.println( e.getMessage());
+			System.out.println( e.getCause());
+			System.out.println( json);
 			e.printStackTrace();
 		}
 		return ret;
 	}
 
 
-
-    /*
-    products = 'https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json'
-	products = 'http://affiliate-api.flipkart.net/affiliate/api/goingkilo.json'
-	deals =    'https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json'
-	offers =   'https://affiliate-api.flipkart.net/affiliate/offers/v1/top/json'
-	search_product = 'https://affiliate-api.flipkart.net/affiliate/product/json?id='
-	search = 'https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count'
-	search = 'http://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count'
-	orders_report = 'https://affiliate-api.flipkart.net/affiliate/report/orders/detail/json?startDate=yyyy-MM-dd&endDate=yyyy-MM-dd&status=<status>&offset=0'
-
-def get(url):
-	req = urllib2.Request(url)
-	req.add_header('Fk-Affiliate-Id', 'goingkilo')
-	req.add_header('Fk-Affiliate-Token', '1368e5baaf8e4bcdb442873d4aa8ef6e')
-	resp = urllib2.urlopen(req)
-	content = resp.read()
-
-	return json.loads(content)
-
-     */
 }

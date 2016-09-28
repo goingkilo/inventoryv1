@@ -34,12 +34,6 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
     public void initialize(Bootstrap<InventoryConfiguration> bootstrap) {
 
         bootstrap.addBundle(hibernate);
-//        bootstrap.addBundle(new ViewBundle<InventoryConfiguration>() {
-//            @Override
-//            public Map<String, Map<String, String>> getViewConfiguration(InventoryConfiguration config) {
-//                return config.getViewRendererConfiguration();
-//            }
-//        });
         bootstrap.addBundle(new ViewBundle<InventoryConfiguration>());
         bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
         bootstrap.addBundle(new MultiPartBundle());
