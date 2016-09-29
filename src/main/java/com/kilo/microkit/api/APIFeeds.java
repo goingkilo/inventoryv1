@@ -49,6 +49,7 @@ public class APIFeeds {
 
         APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
         try {
+            Map<String, String> cats = feeds.categories();
             List<ProductInfo> ret = feeds.products("grooming_beauty_wellness");
             System.out.println(ret);
 

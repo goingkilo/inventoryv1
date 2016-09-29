@@ -20,6 +20,7 @@ public class ProductInfo {
     private Double mrp;
     private Double sellingPrice;
     private String productUrl;
+    private String imageURL;
     private boolean inStock;
 
     public boolean isInStock() {
@@ -78,6 +79,15 @@ public class ProductInfo {
         this.sellingPrice = sellingPrice;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+
     @Override
     public String toString() {
         return "ProductInfo{" +
@@ -87,6 +97,7 @@ public class ProductInfo {
                 ", mrp=" + mrp +
                 ", sellingPrice=" + sellingPrice +
                 ", productUrl='" + productUrl + '\'' +
+                ", imageURL='" + imageURL + '\'' +
                 ", inStock=" + inStock +
                 '}';
     }

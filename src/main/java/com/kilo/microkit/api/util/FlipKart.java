@@ -3,6 +3,9 @@ package com.kilo.microkit.api.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kilo.microkit.api.APIFeeds;
+import com.kilo.microkit.api.AffiliateAPIException;
+import com.kilo.microkit.api.ProductInfo;
 import com.kilo.microkit.api.model.InventoryItem;
 
 import javax.ws.rs.client.Client;
@@ -10,18 +13,16 @@ import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kraghunathan on 9/8/16.
  */
 public class FlipKart {
 
-	public static final String products = "https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json";
-	public static final String deals =    "https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json";
-	public static final String offers =   "https://affiliate-api.flipkart.net/affiliate/offers/v1/all/json";
-	public static final String search_product = "https://affiliate-api.flipkart.net/affiliate/product/json?id=";
 	public static final String search = "https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count";
-	public static final String  orders_report = "https://affiliate-api.flipkart.net/affiliate/report/orders/detail/json?startDate=yyyy-MM-dd&endDate=yyyy-MM-dd&status=<status>&offset=0";
+
+	static APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
 
 
 	public static List<InventoryItem> search(Client client, String searchTerm,  int count) throws SocketTimeoutException {
@@ -29,6 +30,29 @@ public class FlipKart {
 		String s = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
 		return  parse(get(client, s, count));
 	}
+
+	public static Map<String,String> categories() {
+
+		Map<String, String> categories = null;
+		try {
+			categories = feeds.categories();
+		} catch (AffiliateAPIException e) {
+			e.printStackTrace();
+		}
+		return categories;
+	}
+
+	public static List<ProductInfo> products(String category) {
+		List<ProductInfo> productInfos = null;
+		try {
+			productInfos = feeds.products(category);
+		} catch (AffiliateAPIException e) {
+			e.printStackTrace();
+		}
+		return productInfos;
+	}
+
+
 
 	public static String get(Client client, String query, int count) throws SocketTimeoutException {
 		String s = query;
@@ -49,7 +73,7 @@ public class FlipKart {
 		return "";
 	}
 
-	static List<InventoryItem> parse(String json) {
+	public static List<InventoryItem> parse(String json) {
 		List<InventoryItem> ret = new ArrayList<InventoryItem>();
 		try {
 
@@ -88,5 +112,17 @@ public class FlipKart {
 		return ret;
 	}
 
+	public static void main(String[] args) {
+		Map<String, String> a = categories();
+		for( String s : a.keySet()) {
+			System.out.println( s );
+			System.out.println( a.get(s) );
+		}
+		List<ProductInfo> b = products("desktops");
+
+		for(ProductInfo x : b) {
+			System.out.println(x);
+		}
+	}
 
 }

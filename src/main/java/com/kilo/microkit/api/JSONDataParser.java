@@ -103,6 +103,12 @@ public class JSONDataParser extends DataParser {
 
                     JSONObject attributes = inner_obj.getJSONObject("productAttributes");
                     pinfo.setTitle(attributes.getString("title"));
+
+                    JSONObject images = attributes.getJSONObject("imageUrls");
+                    if( images.keySet().size() > 0 ) {
+                        pinfo.setImageURL((String) images.get(images.keySet().iterator().next()));
+                    }
+
                     pinfo.setDescription(attributes.optString("productDescription", ""));
                     pinfo.setMrp(attributes.getJSONObject("maximumRetailPrice").getDouble("amount"));
                     pinfo.setSellingPrice(attributes.getJSONObject("sellingPrice").getDouble("amount"));

@@ -10,7 +10,7 @@ package com.kilo.microkit.api; /***
 import java.lang.Exception;
 
 public class AffiliateAPIException extends Exception {
-    AffiliateAPIException(String message) {
+    public AffiliateAPIException(String message) {
         super(message);
     }
 }
