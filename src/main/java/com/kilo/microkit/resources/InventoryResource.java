@@ -2,6 +2,7 @@ package com.kilo.microkit.resources;
 
 import com.kilo.microkit.api.APIFeeds;
 import com.kilo.microkit.api.AffiliateAPIException;
+import com.kilo.microkit.api.ProductInfo;
 import com.kilo.microkit.api.dao.InventoryDAO;
 import com.kilo.microkit.api.model.InventoryItem;
 import com.kilo.microkit.api.util.FlipKart;
@@ -30,7 +31,7 @@ public class InventoryResource {
     }
 
     @GET
-    @Path("/search/{searchTerm}")
+    @Path("/s/{searchTerm}")
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
     public ItemsView search(@PathParam("searchTerm") String searchTerm) {
@@ -54,7 +55,7 @@ public class InventoryResource {
     @GET
     @Path("/categories")
     @UnitOfWork
-    public String[] get() {
+    public String[] categories() {
 
         APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
         try {
@@ -68,6 +69,22 @@ public class InventoryResource {
             e.printStackTrace();
         }
         return new String[]{};
+    }
+
+    @GET
+    @Path("/products/{category}")
+    @UnitOfWork
+    public List<ProductInfo> products(@PathParam("category") String category) {
+
+        APIFeeds feeds = new APIFeeds("goingkilo", "1368e5baaf8e4bcdb442873d4aa8ef6e", "no");
+        try {
+            List<ProductInfo> ret = feeds.products(category);
+            return  ret;
+
+        } catch (AffiliateAPIException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<ProductInfo>();
     }
 
     @POST

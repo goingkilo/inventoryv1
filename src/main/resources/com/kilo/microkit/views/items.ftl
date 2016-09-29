@@ -33,9 +33,11 @@
             margin-top:5px;
             margin-bottom:5px;
         }
-        .catg{
-            background-color:lightsalmon;
+        button .catg{
+            #background-color:lightsalmon;
+            background-color:aliceblue;
             border:solid 1px lightslategrey;
+            disply:block;
         }
 
 
@@ -47,14 +49,25 @@
 
             $.get( 'http://localhost:8080/i/a/categories', function(x){
                 for( var i in x) {
-                    $('#categories').append( '<p><label class="catg">' + format(x[i]) + "</label>");
+                    $('#categories').append( '<p><button class="catg">' + format(x[i]) + "</button>");
                 }
             });
 
+//            $('button.catg').click( function(x){
+//                console.log(x);
+                $.get( 'http://localhost:8080/i/a/products/sunglasses', function(a) {
+                    for( var i in a) {
+                        console.log( a[i]);
+                        $('#products').append( '<p>' + a[i].title);
+                    }
+                });
+//            });
         });
 
         function format( a ) {
-            return a.split('_').map( function(x) {return x.charAt(0).toUpperCase() + x.slice(1);} ).join(' ');
+            return a.split('_').map( function(x) {
+                return x.charAt(0).toUpperCase() + x.slice(1);
+            } ).join(' ');
         }
 
         function a_resize() {
@@ -124,6 +137,7 @@
                 </#list>
         </div>
         <div class="col-sm-3">
+            <div id="products"></div>
         </div>
         <div class="col-sm-3">
         </div>
