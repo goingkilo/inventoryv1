@@ -470,8 +470,8 @@ p.button{
 ---------------------------------------------------------------------------------------------------------------- */
 img{
     color:#666;
-    font-style:italic;  /* Applies a font-style for alt text */
-    background:#ff8;    /* Applies a font-style for alt text */
+    font-style:italic;  /* Applies a fonts-style for alt text */
+    background:#ff8;    /* Applies a fonts-style for alt text */
 }
 img.outdent{
     margin:0 0 2.4em -12em;

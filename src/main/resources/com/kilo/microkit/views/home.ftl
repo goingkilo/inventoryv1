@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/fonts.css">
     <script type="text/javascript" src="/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/js/jquery.tablesorter.js"></script>
 
 
     <style>
@@ -15,10 +14,14 @@
         table {
             border : solid 1px grey;
             padding:1px;
-            overflow:auto;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
         }
         td {
-            overflow:auto;
+            /*overflow:auto;*/
+            word-wrap:break-word;
+            word-break:break-word;
         }
         .catg{
             #background-color:lightsalmon;
@@ -27,6 +30,9 @@
             display:block;
             margin:2px;
             white-space: normal;
+        }
+        .item-text {
+
         }
 
 
@@ -50,6 +56,8 @@
 
 </head>
 <body>
+
+<#-- nav bar -->
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -79,35 +87,49 @@
     </div>
 </nav>
 
-<div class="container">
+<#-- left panel -->
 
-        <#list products?chunk(3) as p3>
-            <div class="row">
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-2">
+        <#list categories?keys as c>
+            <div class=".btn-group-vertica">
+                <button type="button" class="btn btn-block catg" id="${c}">
+                ${categories[c]}
+                </button>
+            </div>
+        </#list>
+        </div>
+
+        <#-- actual grid of inventory -->
+        <#--split list into chunks of 10-->
+        <#list products?chunk(10) as p3>
+            <div class="col-sm-3">
                 <#list p3 as p>
-                    <div class="col-sm-3">
-                        <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
-                            <tr>
-                                <td>${p.title}</td>
-                                <td>
-                                    <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
-                                </td>
-                            </tr>
-                            <tr  style="background-color:#f9f9e9;">
-                                <td>
-                                    <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
-                                        Buy on Flipkart
-                                    </button>
-                                </td>
-                            </tr>
-                        </table>
-                    </div> <!-- end of col3 -->
+                    <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
+                        <tr>
+                            <td id="item-text">${p.title}</td>
+                            <td>
+                                <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
+                            </td>
+                        </tr>
+                        <tr  style="background-color:#f9f9e9;">
+                            <td>
+                                <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
+                                    Buy on Flipkart
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
                 </#list>
-            </div><!-- end row-->
+            </div>
         </#list>
 
+    </div><!-- end row-->
 
 </div> <!-- end container-->
 
