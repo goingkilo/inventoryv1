@@ -1,6 +1,6 @@
 package com.kilo.microkit.views;
 
-import com.kilo.microkit.api.ProductInfo;
+import com.kilo.microkit.api.model.ProductInfo;
 import io.dropwizard.views.View;
 
 import java.util.List;
@@ -13,14 +13,12 @@ public class HomeView extends View {
 
     private   List<ProductInfo> products;
 
-    private   List<ProductInfo> products2;
     private Map<String, String> categories;
 
     public HomeView(Map<String, String> categories, List<ProductInfo> products ) {
         super("home.ftl");
         this.categories = categories;
-        this.products   = products.subList(0, products.size()/2);
-        this.products2  = products.subList( products.size()/2, products.size());
+        this.products   = products;
     }
 
     public Map<String, String> getCategories() {
@@ -30,11 +28,6 @@ public class HomeView extends View {
     public List<ProductInfo> getProducts() {
         return products;
     }
-
-    public List<ProductInfo> getProducts2() {
-        return products2;
-    }
-
 
 
 }

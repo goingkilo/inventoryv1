@@ -24,7 +24,9 @@
             #background-color:lightsalmon;
             background-color:aliceblue;
             border:solid 1px lightslategrey;
-            disply:block;
+            display:block;
+            margin:2px;
+            white-space: normal;
         }
 
 
@@ -33,7 +35,6 @@
 
         $(document).ready(function () {
             console.log( "## Welcome to the E-Store ## ");
-
         });
 
         function a_resize() {
@@ -55,7 +56,7 @@
             <a class="navbar-brand" href="#"> Kilo Commerce Ltd</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="#">Products</a></li>
             <li><a href="#">Deals & Offers</a></li>
             <li><a href="#">About</a></li>
 
@@ -79,63 +80,34 @@
 </nav>
 
 <div class="container">
-    <div class="row">
-        <div class="col-sm-2">
-            <#list categories?keys as c>
-                <ul class="list-group" style="float:left;">
-                    <li class="list-group-item catg" id="${c}">${categories[c]}</li>
-                </ul>
-            </#list>
-        </div>
 
-        <div class="col-sm-4">
-            <#list products as p>
-                <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
-                    <tr>
-                        <td>${p.title}</td>
-                        <td>
-                            <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
-                        </td>
-                    </tr>
-                    <tr  style="background-color:#f9f9e9;">
-                        <td>
-                            <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
-                        </td>
-                        <td>
-                            <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
-                                Buy on Flipkart
-                            </button>
-                        </td>
-                    </tr>
-                </table>
-            </#list>
-        </div> <!-- end col-sm-4 -->
-        <div class="col-sm-2"></div>
-        <div class="col-sm-4">
-        <#list products2 as p>
-            <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
-                <tr>
-                    <td>${p.title}</td>
-                    <td>
-                        <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
-                    </td>
-                </tr>
-                <tr  style="background-color:#f9f9e9;">
-                    <td>
-                        <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
-                            Buy on Flipkart
-                        </button>
-                    </td>
-                </tr>
-            </table>
+        <#list products?chunk(3) as p3>
+            <div class="row">
+                <#list p3 as p>
+                    <div class="col-sm-3">
+                        <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
+                            <tr>
+                                <td>${p.title}</td>
+                                <td>
+                                    <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
+                                </td>
+                            </tr>
+                            <tr  style="background-color:#f9f9e9;">
+                                <td>
+                                    <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
+                                        Buy on Flipkart
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div> <!-- end of col3 -->
+                </#list>
+            </div><!-- end row-->
         </#list>
-        </div>
 
-
-    </div><!-- end row-->
 
 </div> <!-- end container-->
 

@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Arrays;
 
 /**
  * Created by kraghunathan on 9/17/16.
@@ -17,7 +16,7 @@ public class InventoryItem {
     private String category;
     private String title;
     private String desc;
-    private String[] images;
+    private String image;
     private String price;
     private String color;
     private String url;
@@ -27,13 +26,13 @@ public class InventoryItem {
 
     }
 
-    public InventoryItem(String id, String category, String title, String desc, String[] images, String price, String color, String url, String inStock) {
+    public InventoryItem(String id, String category, String title, String desc, String image, String price, String color, String url, String inStock) {
 
         this.id = id;
         this.category = category;
         this.title = title;
         this.desc = desc;
-        this.images = images;
+        this.image = image;
         this.price = price;
         this.color = color;
         this.url = url;
@@ -87,13 +86,13 @@ public class InventoryItem {
         this.desc = desc;
     }
 
-//    @Column(name = "images")
-    public String[] getImages() {
-        return images;
+    @Column(name = "image")
+    public String getImage() {
+        return image;
     }
 
-    public void setImages(String[] images) {
-        this.images = images;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     @Column(name = "price")
@@ -130,7 +129,7 @@ public class InventoryItem {
                 ",\ncategory='" + category + '\'' +
                 ",\ntitle='" + title + '\'' +
                 ",\ndesc='" + desc + '\'' +
-                ",\nimages=" + Arrays.toString(images) +
+                ",\nimage=" + image  +
                 ",\nprice='" + price + '\'' +
                 ",\ncolor='" + color + '\'' +
                 ",\nurl='" + url + '\'' +

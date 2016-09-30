@@ -1,12 +1,16 @@
 package com.kilo.microkit.resources;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Lists;
-import com.kilo.microkit.api.APIFeeds;
-import com.kilo.microkit.api.AffiliateAPIException;
-import com.kilo.microkit.api.ProductInfo;
+import com.google.common.collect.Ordering;
+import com.kilo.microkit.api.parser.Parser;
+import com.kilo.microkit.api.util.APIFeeds;
+import com.kilo.microkit.api.util.AffiliateAPIException;
+import com.kilo.microkit.api.model.ProductInfo;
 import com.kilo.microkit.api.dao.InventoryDAO;
 import com.kilo.microkit.api.model.InventoryItem;
 import com.kilo.microkit.api.util.FlipKart;
@@ -48,9 +52,11 @@ public class InventoryResource {
         try {
             if (categories == null) {
                 Map<String,String> cats = feeds.categories();
-                categories = new HashMap<String,String>();
-                for( String key : cats.keySet()){
 
+                categories = new HashMap<String,String>();
+
+                for( String key : cats.keySet()){
+                    // change 'hitchhiker_guide' to 'Hitchhiker Guide'
                     Function capitalizer = new Function<String,String>(){
                         @Nullable
                         @Override
@@ -66,6 +72,10 @@ public class InventoryResource {
                     categories.put(key, capSpaced);
                 }
             }
+            //sort categories
+            Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
+            categories = ImmutableSortedMap.copyOf(categories, valueComparator);
+
             if (products == null) {
                 products = feeds.products("laptops");
             }
@@ -126,7 +136,7 @@ public class InventoryResource {
         try {
             String a = FlipKart.get(client, first, 10);
             System.out.println( ">>->>:\n"+a);
-            List<InventoryItem> b = FlipKart.parse(a);
+            List<InventoryItem> b = Parser.parseSearchResults(a);
             return b;
         } catch (SocketTimeoutException e) {
             e.printStackTrace();

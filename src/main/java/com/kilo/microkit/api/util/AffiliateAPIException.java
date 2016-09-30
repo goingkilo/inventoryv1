@@ -1,4 +1,4 @@
-package com.kilo.microkit.api; /***
+package com.kilo.microkit.api.util; /***
  * The Exception class.
  * Please refer to the instructions.txt
  *

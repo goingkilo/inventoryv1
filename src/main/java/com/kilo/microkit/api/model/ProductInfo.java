@@ -1,18 +1,15 @@
-package com.kilo.microkit.api; /***
- * The POJO for the product data.
- * Please refer to the instructions.txt
- *
- *   author vijay.v  flipkart.com
- *   version 1.0
- * Copyright (c) Flipkart India Pvt. Ltd.
- */
+package com.kilo.microkit.api.model;
 
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "ProductInfo")
 public class ProductInfo {
 
-    /**
-     * Below fields list is not a comprehensive one.
-     *
-     */
 
     private String id;
     private String title;
@@ -23,6 +20,7 @@ public class ProductInfo {
     private String imageURL;
     private boolean inStock;
 
+    @Column(name = "in_stock")
     public boolean isInStock() {
         return inStock;
     }
@@ -31,6 +29,8 @@ public class ProductInfo {
         this.inStock = inStock;
     }
 
+    @Id
+    @Column(name = "a_id")
     public String getId() {
         return id;
     }
@@ -39,6 +39,7 @@ public class ProductInfo {
         this.id = id;
     }
 
+    @Column(name = "title",columnDefinition="TEXT")
     public String getTitle() {
         return title;
     }
@@ -47,6 +48,7 @@ public class ProductInfo {
         this.title = title;
     }
 
+    @Column(name = "description",columnDefinition="TEXT")
     public String getDescription() {
         return description;
     }
@@ -55,6 +57,7 @@ public class ProductInfo {
         this.description = description;
     }
 
+    @Column(name = "url")
     public String getProductUrl() {
         return productUrl;
     }
@@ -71,6 +74,7 @@ public class ProductInfo {
         this.mrp = mrp;
     }
 
+    @Column(name = "price")
     public Double getSellingPrice() {
         return sellingPrice;
     }

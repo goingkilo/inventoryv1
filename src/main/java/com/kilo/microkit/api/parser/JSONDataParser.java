@@ -1,4 +1,4 @@
-package com.kilo.microkit.api; /***
+package com.kilo.microkit.api.parser; /***
  * The class to parse JSON data.
  * Please refer to the instructions.txt
  *
@@ -7,6 +7,8 @@ package com.kilo.microkit.api; /***
  * Copyright (c) Flipkart India Pvt. Ltd.
  */
 
+import com.kilo.microkit.api.util.AffiliateAPIException;
+import com.kilo.microkit.api.model.ProductInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +22,7 @@ public class JSONDataParser extends DataParser {
     private String affiliateBaseUrl;
     private Map<String, String> productDirectory;
 
-    JSONDataParser(String affiliateId, String affiliateToken) {
+    public JSONDataParser(String affiliateId, String affiliateToken) {
         this.affiliateId = affiliateId;
         this.affiliateToken = affiliateToken;
         this.affiliateBaseUrl = "https://affiliate-api.flipkart.net/affiliate/api/" + affiliateId + ".json";

@@ -37,9 +37,8 @@
             #background-color:lightsalmon;
             background-color:aliceblue;
             border:solid 1px lightslategrey;
-            disply:block;
+            display:block;
         }
-
 
     </style>
     <script>
@@ -117,7 +116,7 @@
                             ${item.title}
                         </td>
                         <td>
-                            <img src="${item.images[0]}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
+                            <img src="${item.image}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
                         </td>
                     </tr>
                     <tr  style="background-color:#f9f9e9;">

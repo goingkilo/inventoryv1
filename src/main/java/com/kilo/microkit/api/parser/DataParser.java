@@ -1,4 +1,4 @@
-package com.kilo.microkit.api; /***
+package com.kilo.microkit.api.parser; /***
  * The abstract class to parse the data.
  * Please refer to the instructions.txt
  *
@@ -7,12 +7,15 @@ package com.kilo.microkit.api; /***
  * Copyright (c) Flipkart India Pvt. Ltd.
  */
 
+import com.kilo.microkit.api.util.AffiliateAPIException;
+import com.kilo.microkit.api.model.ProductInfo;
+
 import java.util.Map;
 import java.util.List;
 import java.net.*;
 import java.io.*;
 
-abstract class DataParser {
+public abstract class DataParser {
 
     /***
      * queries the URL and gets back the response as string.
@@ -78,14 +81,14 @@ abstract class DataParser {
      *  return true if initialization is successful.
      *  throws AffiliateAPIException
      */
-    abstract boolean initializeProductDirectory() throws AffiliateAPIException;
+    public abstract boolean initializeProductDirectory() throws AffiliateAPIException;
 
     /***
      *
      *  return the locally stored product directory information (A list of categories and the corresponding URLs).
      * Originally updated using initializeProductDirectory() and it should be updated again if the URLs are expired.
      */
-    abstract Map<String, String> getProductDirectory();
+    public abstract Map<String, String> getProductDirectory();
 
     /***
      *
@@ -93,7 +96,7 @@ abstract class DataParser {
      *  return list of products for the given categery from the API service.
      *  throws AffiliateAPIException
      */
-    abstract List<ProductInfo> getProductList(String category) throws AffiliateAPIException;
+    public abstract List<ProductInfo> getProductList(String category) throws AffiliateAPIException;
 
     // Affiliate related information.
     abstract String getAffiliateId();
