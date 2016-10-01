@@ -11,7 +11,7 @@ database:
  driverClass: org.postgresql.Driver 
  user: ${JDBC_DATABASE_USERNAME}
  password: ${JDBC_DATABASE_PASSWORD}
- url: ${JDBC_DATABASE_URL}
+ url: jdbc:postgresql://ec2-54-204-8-138.compute-1.amazonaws.com:5432/dcg11irq2s0ffc?user=ivshsfelyussef&password=gkQ0YPYDFbJo1WdsOPvThLYgC-&sslmode=require
  properties:
   charSet: UTF-8
   hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
