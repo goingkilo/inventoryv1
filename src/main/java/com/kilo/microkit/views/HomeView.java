@@ -1,31 +1,31 @@
 package com.kilo.microkit.views;
 
-import com.kilo.microkit.api.model.ProductInfo;
+import com.kilo.microkit.db.model.Category;
+import com.kilo.microkit.db.model.Product;
 import io.dropwizard.views.View;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by kraghunathan on 9/29/16.
  */
 public class HomeView extends View {
 
-    private   List<ProductInfo> products;
+    private   List<Product> products;
+    private List<Category> categories;
 
-    private Map<String, String> categories;
-
-    public HomeView(Map<String, String> categories, List<ProductInfo> products ) {
+    public HomeView(List<Category> categories, List<Product> products ) {
         super("home.ftl");
         this.categories = categories;
         this.products   = products;
     }
 
-    public Map<String, String> getCategories() {
+    public List<Category> getCategories() {
+
         return categories;
     }
 
-    public List<ProductInfo> getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
 

@@ -1,4 +1,4 @@
-package com.kilo.microkit.api.parser; /***
+package com.kilo.microkit.api.sample; /***
  * The class to parse JSON data.
  * Please refer to the instructions.txt
  *
@@ -7,8 +7,6 @@ package com.kilo.microkit.api.parser; /***
  * Copyright (c) Flipkart India Pvt. Ltd.
  */
 
-import com.kilo.microkit.api.util.AffiliateAPIException;
-import com.kilo.microkit.api.model.ProductInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

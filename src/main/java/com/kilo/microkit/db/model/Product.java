@@ -1,4 +1,4 @@
-package com.kilo.microkit.api.model;
+package com.kilo.microkit.db.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "InventoryItems")
-public class InventoryItem {
+public class Product {
 
     private String id;
     private String category;
@@ -22,11 +22,11 @@ public class InventoryItem {
     private String url;
     private String inStock;
 
-    public InventoryItem() {
+    public Product() {
 
     }
 
-    public InventoryItem(String id, String category, String title, String desc, String image, String price, String color, String url, String inStock) {
+    public Product(String id, String category, String title, String desc, String image, String price, String color, String url, String inStock) {
 
         this.id = id;
         this.category = category;

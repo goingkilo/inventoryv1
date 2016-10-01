@@ -1,10 +1,7 @@
-package com.kilo.microkit.api.model;
+package com.kilo.microkit.api.sample;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ProductInfo")
@@ -20,6 +17,8 @@ public class ProductInfo {
     private String imageURL;
     private boolean inStock;
 
+    public ProductInfo(){}
+
     @Column(name = "in_stock")
     public boolean isInStock() {
         return inStock;
@@ -30,7 +29,8 @@ public class ProductInfo {
     }
 
     @Id
-    @Column(name = "a_id")
+    @Column(name = "p_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public String getId() {
         return id;
     }

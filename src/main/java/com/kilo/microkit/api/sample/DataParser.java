@@ -1,4 +1,4 @@
-package com.kilo.microkit.api.parser; /***
+package com.kilo.microkit.api.sample; /***
  * The abstract class to parse the data.
  * Please refer to the instructions.txt
  *
@@ -6,9 +6,6 @@ package com.kilo.microkit.api.parser; /***
  *  version 1.0
  * Copyright (c) Flipkart India Pvt. Ltd.
  */
-
-import com.kilo.microkit.api.util.AffiliateAPIException;
-import com.kilo.microkit.api.model.ProductInfo;
 
 import java.util.Map;
 import java.util.List;

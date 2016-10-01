@@ -1,9 +1,11 @@
 package com.kilo.microkit;
 
-import com.kilo.microkit.api.dao.InventoryDAO;
-import com.kilo.microkit.api.model.InventoryItem;
+import com.kilo.microkit.db.dao.CategoryDAO;
+import com.kilo.microkit.db.dao.ProductDAO;
+import com.kilo.microkit.db.model.Category;
+import com.kilo.microkit.db.model.Product;
 import com.kilo.microkit.health.RetailHealthCheck;
-import com.kilo.microkit.resources.InventoryResource;
+import com.kilo.microkit.resources.RetailResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -23,7 +25,7 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
         return "Retail inventory from Inventory";
     }
 
-    private final HibernateBundle<InventoryConfiguration> hibernate = new HibernateBundle<InventoryConfiguration>(InventoryItem.class) {
+    private final HibernateBundle<InventoryConfiguration> hibernate = new HibernateBundle<InventoryConfiguration>(Product.class, Category.class) {
         @Override
         public DataSourceFactory getDataSourceFactory(InventoryConfiguration configuration) {
             return configuration.getDataSourceFactory();
@@ -43,12 +45,12 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
     public void run(final InventoryConfiguration configuration,
                     final Environment environment) {
 
-        final InventoryDAO inventoryDAO     = new InventoryDAO(hibernate.getSessionFactory());
+        final ProductDAO productDAO = new ProductDAO(hibernate.getSessionFactory());
+        final CategoryDAO categoryDAO     = new CategoryDAO(hibernate.getSessionFactory());
 
-        final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
-                .build(getName());
+        final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build(getName());
 
-        environment.jersey().register(new InventoryResource( inventoryDAO, client));
+        environment.jersey().register(new RetailResource(productDAO, categoryDAO ,client));
 
         final RetailHealthCheck basicHealthCheck = new RetailHealthCheck();
         environment.healthChecks().register( "basic", basicHealthCheck );

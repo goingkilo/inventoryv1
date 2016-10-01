@@ -52,6 +52,9 @@
             document.location = x;
         }
 
+        function cat(x) {
+            console.log('call for  ' + x);
+        }
     </script>
 
 </head>
@@ -93,10 +96,10 @@
 
     <div class="row">
         <div class="col-sm-2">
-        <#list categories?keys as c>
+        <#list categories as c>
             <div class=".btn-group-vertica">
-                <button type="button" class="btn btn-block catg" id="${c}">
-                ${categories[c]}
+                <button type="button" class="btn btn-block catg" id="${c.title}" onclick="javascript:a_cat('${c.url}')">
+                ${c.displayName}
                 </button>
             </div>
         </#list>
@@ -107,19 +110,19 @@
         <#list products?chunk(10) as p3>
             <div class="col-sm-3">
                 <#list p3 as p>
-                    <table class="table table-striped" data-toggle="tooltip" title="${p.description}">
+                    <table class="table table-striped" data-toggle="tooltip" title="${p.desc}">
                         <tr>
                             <td id="item-text">${p.title}</td>
                             <td>
-                                <img src="${p.imageURL}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
+                                <img src="${p.image}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
                             </td>
                         </tr>
                         <tr  style="background-color:#f9f9e9;">
                             <td>
-                                <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.sellingPrice}</span>
+                                <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.price}</span>
                             </td>
                             <td>
-                                <button class="btn btn-default" onclick="javascript:a_click('${p.productUrl}')">
+                                <button class="btn btn-default" onclick="javascript:a_click('${p.url}')">
                                     Buy on Flipkart
                                 </button>
                             </td>

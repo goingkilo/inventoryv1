@@ -1,6 +1,6 @@
 package com.kilo.microkit.views;
 
-import com.kilo.microkit.api.model.InventoryItem;
+import com.kilo.microkit.db.model.Product;
 import io.dropwizard.views.View;
 
 import java.util.List;
@@ -10,14 +10,14 @@ import java.util.List;
  */
 public class ItemsView extends View {
 
-    private final List<InventoryItem> items;
+    private final List<Product> items;
 
-    public ItemsView(List<InventoryItem> items) {
+    public ItemsView(List<Product> items) {
         super("items.ftl");
         this.items = items;
     }
 
-    public List<InventoryItem> getItems() {
+    public List<Product> getItems() {
 
         return items;
     }

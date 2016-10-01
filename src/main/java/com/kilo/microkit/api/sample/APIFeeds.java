@@ -1,4 +1,4 @@
-package com.kilo.microkit.api.util; /***
+package com.kilo.microkit.api.sample; /***
  * The main class to execute.
  * Please refer to the instructions.txt
  *
@@ -6,10 +6,6 @@ package com.kilo.microkit.api.util; /***
  *  version 1.0
  * Copyright (c) Flipkart India Pvt. Ltd.
  */
-
-import com.kilo.microkit.api.model.ProductInfo;
-import com.kilo.microkit.api.parser.DataParser;
-import com.kilo.microkit.api.parser.JSONDataParser;
 
 import java.util.*;
 
