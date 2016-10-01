@@ -12,8 +12,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -60,48 +58,24 @@ public class RetailResource {
         return new HomeView(categories, products);
     }
 
-    @GET
-    @Path("/s/{searchTerm}")
-    @Produces(MediaType.TEXT_HTML)
-    @UnitOfWork
-    public HomeView search(@PathParam("searchTerm") String searchTerm) {
-
-        List<Product> products = null;
-        try {
-            products = FlipkartProvider.search(client, searchTerm, 10);
-
-            Collections.sort(products, new Comparator<Product>() {
-                @Override
-                public int compare(Product o1, Product o2) {
-                    return (int) (Float.parseFloat(o1.getPrice()) - Float.parseFloat(o2.getPrice()));
-                }
-            });
-        }
-        catch (SocketTimeoutException e) {
-            e.printStackTrace();
-        }
-        return new HomeView(categories, products);
-    }
-
-
     @POST
-    @Path("/s")
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
     public HomeView searchP(@DefaultValue("laptops") @FormParam("searchTerm") String searchTerm) {
 
-        List<Product> ret = null;
+        List<Product> searchResults = null;
         try {
-            ret = FlipkartProvider.search(client, searchTerm, 10);
+            searchResults = FlipkartProvider.search(client, searchTerm, 30);
             //TODO: search results must be stored in ?
             //
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
         }
+        //TODO: doing this too many times
         if( categories == null ) {
             categories = FlipkartProvider.categories(client, categoryDAO);
         }
-        return new HomeView(categories, ret);
+        return new HomeView(categories, searchResults);
     }
 
     private String getCategoryURL(String category){

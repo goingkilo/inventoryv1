@@ -43,6 +43,10 @@
             console.log( "## Welcome to the E-Store ## ");
         });
 
+        function go_home() {
+            document.location = '/i/a';
+        }
+
         function a_resize() {
             $('img').css('height','100px');
         }
@@ -68,7 +72,7 @@
             <a class="navbar-brand" href="#"> Kilo Commerce Ltd</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Products</a></li>
+            <li class="active"><a href="#" onclick="javascript:go_home()">Products</a></li>
             <li><a href="#">Deals & Offers</a></li>
             <li><a href="#">About</a></li>
 
@@ -77,7 +81,7 @@
         <ul class="nav navbar-nav navbar-right">
             <ul class="nav navbar-nav navbar-left">
                 <li>
-                    <form style="margin-top:5px;" class="form-inline" action="../../../i/a/s" method="POST">
+                    <form style="margin-top:5px;" class="form-inline" action="/i/a" method="POST">
                         <div class="form-group">
                             <input type="text" size="45" class="form-control" id="task" name="searchTerm">
                             <button type="submit" class="btn btn-default">Search</button>
@@ -108,10 +112,10 @@
         </div>
 
         <#-- actual grid of inventory -->
-        <#--split list into chunks of 10-->
-        <#list products?chunk(10) as p3>
+        <#--split list into vertical chunks of 10-->
+        <#list products?chunk(10) as p10>
             <div class="col-sm-3">
-                <#list p3 as p>
+                <#list p10 as p>
                     <table class="table table-striped" data-toggle="tooltip" title="${p.desc}">
                         <tr>
                             <td id="item-text">${p.title}</td>
