@@ -5,7 +5,7 @@ database:
  driverClass: org.postgresql.Driver 
  user: monocle_user
  password: password
- url: jdbc:postgresql://localhost:5432/monocle
+ url: ${JDBC_DATABASE_URL}
  properties:
   charSet: UTF-8
   hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect

@@ -1,0 +1,68 @@
+<script src="js/jquery.js"></script>
+<link rel="stylesheet" href="css/bootstrap-theme.css">
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/fonts.css">
+<script src="js/bootstrap.js"></script>
+
+
+ <style>
+
+     img {
+         width: 100px;
+         height:100px;
+     }
+
+ </style>
+<script>
+
+    var template  = "<table> " +
+                        "<tr> " +
+                            "<td> description <br> title <\/td>  " +
+                            "<td> "+
+                                "<a href=\"link\"> <img src=\"url\"\/> </a> " +
+                            "<\/td> <\/tr> <\/table>";
+
+    $(document).ready(function(){
+
+        console.log('loading paper' + new Date());
+
+        $.get('http://localhost:8080/i/inventory/get/deals', function (x) {
+            var items = x["dotdList"];
+            console.log(items);
+
+            for (var a in items) {
+                console.log(items[a]);
+                var b = template.replace('link',items[a].url)
+                        .replace('title',items[a].title)
+                        .replace('description',items[a].description)
+                        .replace('url',items[a].imageUrls[0].url);
+
+                $('#midlorian').append(b);
+            }
+        });
+
+    });
+
+
+
+</script>
+
+<body>
+
+<section>
+    <div class="container">
+
+
+        <div class="row" style="margin-top:4px;">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-3" id="midlorian">
+
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
