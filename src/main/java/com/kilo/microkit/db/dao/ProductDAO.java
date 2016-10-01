@@ -14,10 +14,13 @@ public class ProductDAO extends AbstractDAO<Product> {
 		super(sessionFactory);
 	}
 
-	public List<Product> getInventoryItems() {
+	public List<Product> getInventoryItems(String category) {
 		Criteria cr = currentSession().createCriteria(Product.class);
+		cr.add(Restrictions.eq("category", category));
+		cr.add(Restrictions.eq("inStock", "true"));
 		return cr.list();
 	}
+
 
 	public List<Product> getInventoryItemsByLink(String link) {
 		Criteria cr = currentSession().createCriteria(Product.class);
@@ -25,9 +28,15 @@ public class ProductDAO extends AbstractDAO<Product> {
 		return cr.list();
 	}
 
-	public void saveMany(List<Product> products) {
+	public void saveMany(List<Product> products, String category) {
 		for( Product product : products) {
 			try {
+				if( category != null ) {
+					if (product.getCategory() == null || product.getCategory().equalsIgnoreCase("")) {
+
+						product.setCategory(category);
+					}
+				}
 				persist(product);
 			}catch (RuntimeException e) {
 				e.printStackTrace();;

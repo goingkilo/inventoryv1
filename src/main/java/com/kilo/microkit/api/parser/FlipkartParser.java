@@ -48,9 +48,9 @@ public class FlipkartParser {
 
                 String[] imgkeys = new String[]{"200x200", "200x200", "200x200", "200x200", "default", "unknown"};
                 for (String key : imgkeys) {
-                    String img = item.findValue(key).asText();
+                    JsonNode img = item.findValue(key);
                     if (img != null) {
-                        p.setImage(img);
+                        p.setImage(img.asText());
                     }
                 }
                 ret.add(p);
@@ -97,6 +97,7 @@ public class FlipkartParser {
                 l.add(new Category(category_name, category_url));
             }
         } catch (JSONException je) {
+            je.printStackTrace();
             return null;
         }
         return l;
@@ -131,6 +132,7 @@ public class FlipkartParser {
                     product.setImage((String) images.get(images.keySet().iterator().next()));
                 }
 
+//                product.setCategory(attributes.optString("category", ""));
                 product.setDesc(attributes.optString("productDescription", ""));
                 product.setPrice(String.valueOf(attributes.getJSONObject("sellingPrice").getDouble("amount")));
                 product.setUrl(attributes.getString("productUrl"));

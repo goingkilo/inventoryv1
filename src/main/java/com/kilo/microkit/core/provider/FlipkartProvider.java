@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,16 +60,29 @@ public class FlipkartProvider {
      * @param categoryDAO
      * @return
      */
-    public static List<Category>    categories(Client client, CategoryDAO categoryDAO) {
+    public static List<Category> categories(Client client, CategoryDAO categoryDAO) {
 
         try {
-            List<Category> categories = categoryDAO.getCategories();
+            List<Category> categories= categoryDAO.getCategories();
             if (categories == null || categories.size() == 0) {
                 String j = get(client, categoriesURL);
                 categories = FlipkartParser.parseCategories(j);
                 categoryDAO.saveMany(categories);
             }
-            return (categories == null) ? new ArrayList<Category>() : categories;
+
+            // sort map by value
+            // Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
+            // categories = ImmutableSortedMap.copyOf(categories, valueComparator);
+
+            if (categories != null) {
+                Collections.sort(categories, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category c1, Category c2) {
+                        return c1.getTitle().compareTo(c2.getTitle());
+                    }
+                });
+                return categories;
+            }
 
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
@@ -84,20 +99,23 @@ public class FlipkartProvider {
      * @param categoryURL
      * @return
      */
-    public static List<Product> products(Client client, ProductDAO dao, String categoryURL, int offset, int size) {
+    public static List<Product> products(Client client, ProductDAO dao, String category, String categoryURL, int offset, int size) {
         List<Product> products = new ArrayList<Product>();
         try {
-            products = dao.getInventoryItems();
+            products = dao.getInventoryItems(category);
             if (products == null || products.size() == 0) {
                 String json = get(client, categoryURL);
                 products = FlipkartParser.parseProductInfo(json);
-                dao.saveMany(products);
+                dao.saveMany(products ,category);
             }
 
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
         }
-        return products.subList(offset, offset + size);
+        if( products.size() > ( offset + size) ) {
+            return products.subList(offset, offset + size);
+        }
+        return products;
     }
 
     /**
@@ -108,8 +126,8 @@ public class FlipkartProvider {
      * @param categoryURL
      * @return
      */
-    public static List<Product> products(Client client, ProductDAO dao, String categoryURL) {
-        return products(client, dao, categoryURL, 0, 30);
+    public static List<Product> products(Client client, ProductDAO dao, String category, String categoryURL) {
+        return products(client, dao, category, categoryURL, 0, 30);
     }
 
 
@@ -172,7 +190,7 @@ public class FlipkartProvider {
             System.out.println(s.getTitle());
             System.out.println(s.getUrl());
         }
-        List<Product> b = products(null, null, "desktopsURL");
+        List<Product> b = products(null, null, null, "desktopsURL");
 
         for (Product x : b) {
             System.out.println(x);

@@ -6,14 +6,12 @@ import com.kilo.microkit.db.dao.ProductDAO;
 import com.kilo.microkit.db.model.Category;
 import com.kilo.microkit.db.model.Product;
 import com.kilo.microkit.views.HomeView;
-import com.kilo.microkit.views.ItemsView;
 import io.dropwizard.hibernate.UnitOfWork;
 
 import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +26,8 @@ public class RetailResource {
     private final Client client;
     private final ProductDAO productDAO;
     private final CategoryDAO categoryDAO;
+
+    String currentCategory = "laptops";
 
     // this is local cache for the home page
     List<Category> categories = null;
@@ -44,18 +44,17 @@ public class RetailResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
-    public HomeView home() {
+    public HomeView home(@DefaultValue("laptops") @QueryParam("category") String category) {
 
-        if (categories == null) {
+        if (categories == null || categories.size() == 0 ) {
             categories = FlipkartProvider.categories(client, categoryDAO);
         }
 
-        // sort map by value
-        // Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
-        // categories = ImmutableSortedMap.copyOf(categories, valueComparator);
 
-        if (products == null) {
-            products = FlipkartProvider.products(client, productDAO, getCategoryURL("laptops"));
+    //TODO: product management. can't be doing a getAll from db.need getProduct(category)
+        if (products == null || !category.equals(currentCategory)) {
+            currentCategory = category;
+            products = FlipkartProvider.products(client, productDAO, category, getCategoryURL(category));
         }
 
         return new HomeView(categories, products);
@@ -84,41 +83,25 @@ public class RetailResource {
         return new HomeView(categories, products);
     }
 
-    @GET
-    @Path("/categories")
-    @UnitOfWork
-    public List<Category> categories() {
-
-        categories = FlipkartProvider.categories(client, categoryDAO);
-        return ( categories == null ) ? new ArrayList<Category>() :  categories ;
-    }
-
-    @GET
-    @Path("/products/{category}")
-    @UnitOfWork
-    public List<Product> products(@PathParam("category") String category) {
-
-        String categoryURL = getCategoryURL( category);
-        List<Product> l = FlipkartProvider.products(client, productDAO, categoryURL);
-        return l.subList(0, 15);
-
-    }
 
     @POST
     @Path("/s")
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
-    public ItemsView searchP(@FormParam("searchTerm") String searchTerm) {
+    public HomeView searchP(@DefaultValue("laptops") @FormParam("searchTerm") String searchTerm) {
 
         List<Product> ret = null;
         try {
             ret = FlipkartProvider.search(client, searchTerm, 10);
-            //search results must be indexed and stored
-            productDAO.saveMany(ret);
+            //TODO: search results must be stored in ?
+            //
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
         }
-        return new ItemsView(ret);
+        if( categories == null ) {
+            categories = FlipkartProvider.categories(client, categoryDAO);
+        }
+        return new HomeView(categories, ret);
     }
 
     private String getCategoryURL(String category){

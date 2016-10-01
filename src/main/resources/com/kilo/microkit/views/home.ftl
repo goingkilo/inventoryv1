@@ -52,8 +52,9 @@
             document.location = x;
         }
 
-        function cat(x) {
+        function a_cat(x) {
             console.log('call for  ' + x);
+            document.location = './a?category=' + x;
         }
     </script>
 
@@ -88,6 +89,7 @@
             <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
     </div>
+
 </nav>
 
 <#-- left panel -->
@@ -98,7 +100,7 @@
         <div class="col-sm-2">
         <#list categories as c>
             <div class=".btn-group-vertica">
-                <button type="button" class="btn btn-block catg" id="${c.title}" onclick="javascript:a_cat('${c.url}')">
+                <button type="button" class="btn btn-block catg" id="${c.title}" onclick="javascript:a_cat('${c.title}')">
                 ${c.displayName}
                 </button>
             </div>

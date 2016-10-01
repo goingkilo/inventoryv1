@@ -1,0 +1,16 @@
+DONE:
+product sublisting error - if products retrieved has less than 30 items
+productDAO now searches by category, and adds category when saving,when provided
+return only in-stock items (?)
+sorted categories before returning
+search results return HomeView
+
+TODO:
+need to separate out db and provider, then introduce redis on top of provider
+search results need to be stored in format search-term:[id,id,id]
+need to sort products by price or brand or whateva
+pagination
+send emails
+redis config ?
+search results less than 10 are shown in 1 column,
+rendering still not row wise
