@@ -16,6 +16,9 @@ import java.util.List;
 
 /**
  * Created by kraghunathan on 9/16/16.
+ * TODO: move all if-null-then-fetch logic to provider (rename to manager ?)
+ * TODO: move all db calls to provider to delegate to db
+ * TODO: provider to manage categories, products lifecycles
  */
 @Path("/a")
 @Produces(MediaType.APPLICATION_JSON)

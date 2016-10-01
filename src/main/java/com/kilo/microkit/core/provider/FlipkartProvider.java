@@ -24,6 +24,7 @@ import java.util.List;
  * . api to timecheck if both of above is not stale (ie less than 10 hrs old)
  * . search results for a given search term
  * TODO: offers and deals-of-the-day
+ * TODO: strip out http calls (HTTPUtil) ,strip out db calls(FlipkartDBProvider, add FlipkartCache
  * <p>
  * Created by kraghunathan on
  * 9/8/16.
