@@ -45,6 +45,8 @@ public class FlipkartParser {
                 p.setUrl(item.findValue("productUrl").asText());
                 p.setColor(item.findValue("color").asText());
                 p.setInStock(item.findValue("inStock").asText());
+                p.setBrand(item.findValue("productBrand").asText());
+                p.setAvailable(item.findValue("isAvailable").asText());
 
                 String[] imgkeys = new String[]{"200x200", "200x200", "200x200", "200x200", "default", "unknown"};
                 for (String key : imgkeys) {
@@ -137,6 +139,8 @@ public class FlipkartParser {
                 product.setPrice(String.valueOf(attributes.getJSONObject("sellingPrice").getDouble("amount")));
                 product.setUrl(attributes.getString("productUrl"));
                 product.setInStock( String.valueOf(attributes.getBoolean("inStock")));
+                product.setBrand( String.valueOf(attributes.getString("productBrand")));
+                product.setAvailable(String.valueOf(attributes.getBoolean("isAvailable")));
 
                 items.add(product);
             }

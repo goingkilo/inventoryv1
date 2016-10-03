@@ -21,7 +21,6 @@ public class ProductDAO extends AbstractDAO<Product> {
 		return cr.list();
 	}
 
-
 	public List<Product> getInventoryItemsByLink(String link) {
 		Criteria cr = currentSession().createCriteria(Product.class);
 		cr.add(Restrictions.like("link", "%" + link + "%"));

@@ -19,24 +19,12 @@ public class Product {
     private String image;
     private String price;
     private String color;
+    private String brand;
     private String url;
     private String inStock;
+    private String available;
 
     public Product() {
-
-    }
-
-    public Product(String id, String category, String title, String desc, String image, String price, String color, String url, String inStock) {
-
-        this.id = id;
-        this.category = category;
-        this.title = title;
-        this.desc = desc;
-        this.image = image;
-        this.price = price;
-        this.color = color;
-        this.url = url;
-        this.inStock = inStock;
 
     }
 
@@ -122,19 +110,51 @@ public class Product {
         this.url = url;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(String available) {
+        this.available = available;
+    }
+
+    public Product(String id, String category, String title, String desc, String image, String price, String color, String brand, String url, String inStock, String available) {
+        this.id = id;
+        this.category = category;
+        this.title = title;
+        this.desc = desc;
+        this.image = image;
+        this.price = price;
+        this.color = color;
+        this.brand = brand;
+        this.url = url;
+        this.inStock = inStock;
+        this.available = available;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
-                "\nid='" + id + '\'' +
-                ",\ncategory='" + category + '\'' +
-                ",\ntitle='" + title + '\'' +
-                ",\ndesc='" + desc + '\'' +
-                ",\nimage=" + image  +
-                ",\nprice='" + price + '\'' +
-                ",\ncolor='" + color + '\'' +
-                ",\nurl='" + url + '\'' +
-                ",\ninStock='" + inStock + '\'' +
-                "\n}";
+                "id='" + id + '\'' +
+                ", category='" + category + '\'' +
+                ", title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", image='" + image + '\'' +
+                ", price='" + price + '\'' +
+                ", color='" + color + '\'' +
+                ", brand='" + brand + '\'' +
+                ", url='" + url + '\'' +
+                ", inStock='" + inStock + '\'' +
+                ", available='" + available + '\'' +
+                '}';
     }
 }
 

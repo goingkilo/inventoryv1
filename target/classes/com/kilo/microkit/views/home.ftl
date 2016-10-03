@@ -35,8 +35,8 @@
 
         }
 
-
     </style>
+
     <script>
 
         $(document).ready(function () {
@@ -61,7 +61,16 @@
             document.location = './a?category=' + x;
         }
     </script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+        ga('create', 'UA-67365759-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
 </head>
 <body>
 
@@ -69,7 +78,7 @@
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"> Kilo Commerce Ltd</a>
+            <a class="navbar-brand" href="#">5 Kilo Commerce Ltd</a>
         </div>
         <ul class="nav navbar-nav">
             <li class="active"><a href="#" onclick="javascript:go_home()">Products</a></li>
