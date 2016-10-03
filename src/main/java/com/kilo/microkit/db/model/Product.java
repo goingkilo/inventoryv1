@@ -9,7 +9,7 @@ import javax.persistence.Table;
  * Created by kraghunathan on 9/17/16.
  */
 @Entity
-@Table(name = "InventoryItems")
+@Table(name = "Product")
 public class Product {
 
     private String id;
@@ -110,6 +110,7 @@ public class Product {
         this.url = url;
     }
 
+    @Column(name="brand")
     public String getBrand() {
         return brand;
     }
@@ -118,6 +119,7 @@ public class Product {
         this.brand = brand;
     }
 
+    @Column(name="is_available")
     public String getAvailable() {
         return available;
     }

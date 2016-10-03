@@ -43,10 +43,15 @@ public class FlipkartProvider {
      * @return
      * @throws SocketTimeoutException
      */
-    public static List<Product> search(Client client, String searchTerm, int count) throws SocketTimeoutException {
+    public static List<Product> search(Client client, ProductDAO productsDAO, String searchTerm, int count) throws SocketTimeoutException {
 
         String s = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
-        return FlipkartParser.parseSearchResults(get(client, s));
+
+        List<Product> remoteSearchResults = FlipkartParser.parseSearchResults(get(client, s));
+        List<Product> localSearchResults = productsDAO.search( searchTerm);
+        remoteSearchResults.addAll(localSearchResults);
+
+        return remoteSearchResults;
     }
 
     /**
@@ -103,12 +108,19 @@ public class FlipkartProvider {
     public static List<Product> products(Client client, ProductDAO dao, String category, String categoryURL, int offset, int size) {
         List<Product> products = new ArrayList<Product>();
         try {
-            products = dao.getInventoryItems(category);
+            products = dao.getProducts(category);
             if (products == null || products.size() == 0) {
                 String json = get(client, categoryURL);
                 products = FlipkartParser.parseProductInfo(json);
                 dao.saveMany(products ,category);
             }
+            products = dao.getProducts(category);
+            Collections.sort(products, new Comparator<Product>() {
+                @Override
+                public int compare(Product p1, Product p2) {
+                    return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
+                }
+            });
 
         } catch (SocketTimeoutException e) {
             e.printStackTrace();

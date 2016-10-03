@@ -53,7 +53,7 @@
 
         function a_click(x) {
             console.log('redirecting to ' + x);
-            document.location = x;
+            window.open( x);
         }
 
         function a_cat(x) {
@@ -121,26 +121,20 @@
         </#list>
         </div>
 
-
         <div class="col-sm-9">
-
-            Sort by
-
             <div class="row">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-11">
+                    <label>Sort by</label>
+                    <label>Brand </label>
+                    <a href="#">Price - low to high</a>
+                    <a href="#">Price - high to low</a>
+                    <div style="border:solid 1px #e6e6e6;margin:3px;"></div>
 
-                <div style="border:solid 1px #e6e6e6;margin-top:5px;margin-bottom:5px"></div>
-
-                <select class="selectpicker">
-                    <option>Mustard</option>
-                    <option>Ketchup</option>
-                    <option>Relish</option>
-                </select>
-
-                <a href="#">Price - low to high</a>
-                <a href="#">Price - high to low</a>
-                <div style="border:solid 1px #e6e6e6;margin-top:5px;margin-bottom:5px"></div>
-
+                </div>
             </div>
+
             <#list products?chunk(3) as p3>
             <div class="row">
                 <#list p3 as p>

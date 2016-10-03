@@ -53,7 +53,7 @@
 
         function a_click(x) {
             console.log('redirecting to ' + x);
-            document.location = x;
+            window.open( x);
         }
 
         function a_cat(x) {
@@ -121,47 +121,44 @@
         </#list>
         </div>
 
-
         <div class="col-sm-9">
             <div class="row">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-11">
+                    <label>Sort by</label>
+                    <label>Brand </label>
+                    <a href="#">Price - low to high</a>
+                    <a href="#">Price - high to low</a>
+                    <div style="border:solid 1px #e6e6e6;margin:3px;"></div>
 
-                <div style="border:solid 1px #e6e6e6;margin-top:5px;margin-bottom:5px"></div>
-
-                <select class="selectpicker">
-                    <option>Mustard</option>
-                    <option>Ketchup</option>
-                    <option>Relish</option>
-                </select>
-
-                <a href="#">Price - low to high</a>
-                <a href="#">Price - high to low</a>
-                <div style="border:solid 1px #e6e6e6;margin-top:5px;margin-bottom:5px"></div>
-
+                </div>
             </div>
+
             <#list products?chunk(3) as p3>
             <div class="row">
-                    <#list p3 as p>
-                    <div class="col-sm-4">
-                        <table class="table table-striped" data-toggle="tooltip" title="${p.desc}">
-                            <tr>
-                                <td id="item-text">${p.title}</td>
-                                <td>
-                                    <img src="${p.image}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
-                                </td>
-                            </tr>
-                            <tr  style="background-color:#f9f9e9;">
-                                <td>
-                                    <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.price}</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-default" onclick="javascript:a_click('${p.url}')">
-                                        Buy on Flipkart
-                                    </button>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    </#list>
+                <#list p3 as p>
+                <div class="col-sm-4">
+                    <table class="table table-striped" data-toggle="tooltip" title="${p.desc}">
+                        <tr>
+                            <td id="item-text">${p.title}</td>
+                            <td>
+                                <img src="${p.image}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>
+                            </td>
+                        </tr>
+                        <tr  style="background-color:#f9f9e9;">
+                            <td>
+                                <span style="font-weight:bold;" class="class="btn btn-success">&#x20B9 ${p.price}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-default" onclick="javascript:a_click('${p.url}')">
+                                    Buy on Flipkart
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                </#list>
             </div>
             </#list>
         </div>

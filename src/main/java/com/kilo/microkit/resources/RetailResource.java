@@ -68,7 +68,7 @@ public class RetailResource {
 
         List<Product> searchResults = null;
         try {
-            searchResults = FlipkartProvider.search(client, searchTerm, 30);
+            searchResults = FlipkartProvider.search(client, productDAO, searchTerm, 30);
             //TODO: search results must be stored in ?
             //
         } catch (SocketTimeoutException e) {
