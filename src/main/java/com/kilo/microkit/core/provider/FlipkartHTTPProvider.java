@@ -1,99 +1,110 @@
 package com.kilo.microkit.core.provider;
 
-
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.kilo.microkit.api.parser.FlipkartParser;
 import com.kilo.microkit.db.model.Category;
 import com.kilo.microkit.db.model.Product;
 
+import javax.ws.rs.client.Client;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
- * FlipkartProvider provides following functionality
- * . a list of categories
- * . a list of products for a given category
- * . api to timecheck if both of above is not stale (ie less than 10 hrs old)
- * . search results for a given search term
- * TODO: offers and deals-of-the-day
- * <p>
- * Created by kraghunathan on
- * 9/8/16.
  */
 public class FlipkartHTTPProvider {
 
     public static final String search = "https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count";
     public static final String categoriesURL = "https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json";
 
+    public static boolean local = false;
+
+    private Client client;
+
+    public FlipkartHTTPProvider() {
+    }
+
+    public FlipkartHTTPProvider(Client client) {
+        this.client = client;
+    }
+
     /**
-     * Search me
-     *
+     * Flipkart returns only 10 results at a time
      * @param searchTerm
-     * @param count
      * @return
      * @throws SocketTimeoutException
      */
     public List<Product> search(String searchTerm, int count) throws SocketTimeoutException {
 
-        String s = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
-        return FlipkartParser.parseSearchResults(get( s));
+        String url = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
+        String json = httpGet( url);
+        saveLocal( "s_"+searchTerm, json);
+        List<Product> remoteSearchResults = FlipkartParser.parseSearchResults(json);
+        return remoteSearchResults;
     }
 
-    /**
-     * Get categories from the affiliate site.
-     * If this information is not present as a field, then check
-     * TODO:redis cache.
-     * If unavailable, check the DB , and if not stale, get from
-     * distant affiliate site as a last resort
-     * TODO: This information expires in 10 hrs.needs isFresh() and refresh()
-     *
-     */
     public List<Category> categories() {
+        try {
+            String json = httpGet(categoriesURL);
+            List<Category> categories = FlipkartParser.parseCategories(json);
+            saveLocal( "categories", json);
+            if (categories != null) {
+                Collections.sort(categories, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category c1, Category c2) {
+                        return c1.getTitle().compareTo(c2.getTitle());
+                    }
+                });
 
-        List<Category> categories = null;
-        String j = get(categoriesURL);
-        categories = FlipkartParser.parseCategories(j);
-        return (categories == null) ? new ArrayList<Category>() : categories;
+                return categories;
+            }
 
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<Category>();
     }
 
-    /**
-     * Get list of products for a given category title
-     * by either from DB if already existing or
-     * fetching from affiliate API using corresponding fetch URL
-     * TODO: this info expires in 10 hrs,needs isFresh()  & refresh()
-     *
-     * @param categoryURL
-     * @return
-     */
-    public List<Product> products(String categoryURL, int offset, int size) {
+    public List<Product> products( String category, String categoryURL) {
         List<Product> products = new ArrayList<Product>();
-        String json = get(categoryURL);
-        products = FlipkartParser.parseProductInfo(json);
-        return products.subList(offset, offset + size);
+        try {
+            String json = httpGet(categoryURL);
+            saveLocal( "p_"+category, json);
+            products = FlipkartParser.parseProductInfo(json);
+
+            Collections.sort(products, new Comparator<Product>() {
+                @Override
+                public int compare(Product p1, Product p2) {
+                    return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
+                }
+            });
+
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+        }
+        return products;
     }
 
-    /**
-     * what we actually call
-     *
-     * @param categoryURL
-     * @return
-     */
-    public  List<Product> products(String categoryURL) {
-        return products(categoryURL, 0, 15);
+    private boolean saveLocal(String name, String json) {
+        File file = new File( name + ".json");
+        try {
+            Files.write(json, file, Charsets.UTF_8);
+            System.out.println( "saved " + name + " to disk.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-
-    /**
-     * Utility method to handle http get for my affiliate id
-     *
-     * @param query
-     * @return
-     */
-    public String get(String query) {
+    public String httpGet(String query) throws SocketTimeoutException {
         String s = query;
         HttpURLConnection con = null;
         try {
@@ -106,6 +117,7 @@ public class FlipkartHTTPProvider {
 
             int status = con.getResponseCode();
 
+
             if (status == HttpURLConnection.HTTP_OK) {
 
                 BufferedReader in = new BufferedReader(
@@ -116,6 +128,8 @@ public class FlipkartHTTPProvider {
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
+                in.close();
+
                 return response.toString();
 
             }
@@ -129,24 +143,9 @@ public class FlipkartHTTPProvider {
         finally {
             if (con != null) {
                 con.disconnect();
-                con = null;
             }
-
         }
         return "";
-    }
-
-
-    public static void main(String[] args) {
-        FlipkartHTTPProvider f = new FlipkartHTTPProvider();
-        List<Category> a = f.categories();
-        String url = a.get(0).getUrl();
-        System.out.println(url);
-        List<Product> b = f.products(url );
-
-        for (Product x : b) {
-            System.out.println(x);
-        }
     }
 
 }

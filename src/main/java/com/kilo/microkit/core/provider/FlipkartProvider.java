@@ -1,17 +1,13 @@
 package com.kilo.microkit.core.provider;
 
 
-import com.kilo.microkit.api.parser.FlipkartParser;
 import com.kilo.microkit.db.dao.CategoryDAO;
 import com.kilo.microkit.db.dao.ProductDAO;
 import com.kilo.microkit.db.model.Category;
 import com.kilo.microkit.db.model.Product;
 
 import javax.ws.rs.client.Client;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.*;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,74 +21,84 @@ import java.util.List;
  * . search results for a given search term
  * TODO: offers and deals-of-the-day
  * TODO: strip out http calls (HTTPUtil) ,strip out db calls(FlipkartDBProvider, add FlipkartCache
+ * TODO: where to put stale-checking ?
+ * TODO :pagination decorator, sorter
+ * TODO: search - caching, etc
  * <p>
  * Created by kraghunathan on
  * 9/8/16.
  */
 public class FlipkartProvider {
 
-    public static final String search = "https://affiliate-api.flipkart.net/affiliate/search/json?query=searchTerm&resultCount=Count";
-    public static final String categoriesURL = "https://affiliate-api.flipkart.net/affiliate/api/goingkilo.json";
+    FlipkartDBProvider db;
+    FlipkartHTTPProvider http;
+    FlipkartCache cache;
+
+    public FlipkartProvider() {
+
+    }
+
+    public FlipkartProvider(Client client, ProductDAO productDAO, CategoryDAO categoryDAO) {
+        db = new FlipkartDBProvider(productDAO,categoryDAO);
+        http = new FlipkartHTTPProvider(client);
+    }
+
+    public FlipkartProvider(FlipkartDBProvider db, FlipkartHTTPProvider http, FlipkartCache cache) {
+        this.db = db;
+        this.http = http;
+        this.cache = cache;
+    }
 
     /**
-     * Search me
+     * Search -
      *
-     * @param client
      * @param searchTerm
      * @param count
      * @return
-     * @throws SocketTimeoutException
      */
-    public static List<Product> search(Client client, ProductDAO productsDAO, String searchTerm, int count) throws SocketTimeoutException {
+    public List<Product> search( String searchTerm, int count) throws SocketTimeoutException {
 
-        String s = search.replace("searchTerm", searchTerm).replace("=Count", "=" + count);
+        List<Product> remoteSearchResults = http.search( searchTerm, 30);
+        List<Product> localSearchResults = db.search( searchTerm);
 
-        List<Product> remoteSearchResults = FlipkartParser.parseSearchResults(get(client, s));
-        List<Product> localSearchResults = productsDAO.search( searchTerm);
         remoteSearchResults.addAll(localSearchResults);
 
         return remoteSearchResults;
     }
 
     /**
-     * Get categories from the affiliate site.
-     * If this information is not present as a field, then check
-     * TODO:redis cache.
-     * If unavailable, check the DB , and if not stale, get from
-     * distant affiliate site as a last resort
-     * TODO: This information expires in 10 hrs.needs isFresh() and refresh()
+     * Get list of categories
+     * the order of retrieval is cache, db then http
+     * TODO: This information expires in 10 hrs. lifecycle management needed
      *
-     * @param client
-     * @param categoryDAO
      * @return
      */
-    public static List<Category> categories(Client client, CategoryDAO categoryDAO) {
+    public List<Category> categories() {
 
-        try {
-            List<Category> categories= categoryDAO.getCategories();
-            if (categories == null || categories.size() == 0) {
-                String j = get(client, categoriesURL);
-                categories = FlipkartParser.parseCategories(j);
-                categoryDAO.saveMany(categories);
-            }
+        if( db.isStale()){
 
-            // sort map by value
-            // Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
-            // categories = ImmutableSortedMap.copyOf(categories, valueComparator);
-
-            if (categories != null) {
-                Collections.sort(categories, new Comparator<Category>() {
-                    @Override
-                    public int compare(Category c1, Category c2) {
-                        return c1.getTitle().compareTo(c2.getTitle());
-                    }
-                });
-                return categories;
-            }
-
-        } catch (SocketTimeoutException e) {
-            e.printStackTrace();
         }
+        List<Category> categories = db.categories();
+        if( categories == null || categories.size() == 0) {
+            categories = http.categories();
+            db.getCategoryDAO().saveMany(categories);
+        }
+        categories = db.categories();
+
+        if (categories != null && categories.size() != 0) {
+            Collections.sort(categories, new Comparator<Category>() {
+                @Override
+                public int compare(Category c1, Category c2) {
+                    return c1.getTitle().compareTo(c2.getTitle());
+                }
+            });
+            return categories;
+        }
+
+        // sort map by value
+        // Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
+        // categories = ImmutableSortedMap.copyOf(categories, valueComparator);
+
         return new ArrayList<Category>();
     }
 
@@ -105,109 +111,59 @@ public class FlipkartProvider {
      * @param categoryURL
      * @return
      */
-    public static List<Product> products(Client client, ProductDAO dao, String category, String categoryURL, int offset, int size) {
-        List<Product> products = new ArrayList<Product>();
-        try {
-            products = dao.getProducts(category);
-            if (products == null || products.size() == 0) {
-                String json = get(client, categoryURL);
-                products = FlipkartParser.parseProductInfo(json);
-                dao.saveMany(products ,category);
-            }
-            products = dao.getProducts(category);
-            Collections.sort(products, new Comparator<Product>() {
-                @Override
-                public int compare(Product p1, Product p2) {
-                    return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
-                }
-            });
+    public List<Product> products( String category, String categoryURL, String sort, int offset, int size) {
 
-        } catch (SocketTimeoutException e) {
-            e.printStackTrace();
+        List<Product>    products = db.products(category);
+
+        if (products == null || products.size() == 0) {
+            List<Product> products1 = http.products(category, categoryURL);
+            db.getProductDAO().saveMany(products1 ,category);
         }
+        products = db.products(category);
+
+        switch( sort){
+            case "brand":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return p1.getBrand().compareTo(p2.getBrand());
+                    }
+                });
+                break;
+            case "pricel":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
+                    }
+                });
+                break;
+            case "priceh":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return Float.valueOf(p2.getPrice()).compareTo(Float.valueOf(p1.getPrice()));
+                    }
+                });
+                break;
+        }
+
+
         if( products.size() > ( offset + size) ) {
             return products.subList(offset, offset + size);
         }
+
         return products;
     }
 
     /**
      * what we actually call
      *
-     * @param client
-     * @param dao
      * @param categoryURL
      * @return
      */
-    public static List<Product> products(Client client, ProductDAO dao, String category, String categoryURL) {
-        return products(client, dao, category, categoryURL, 0, 30);
-    }
-
-
-    /**
-     * Utility method to handle http get for my affiliate id
-     *
-     * @param client
-     * @param query
-     * @return
-     * @throws SocketTimeoutException
-     */
-    public static String get(Client client, String query) throws SocketTimeoutException {
-        String s = query;
-        HttpURLConnection con = null;
-        try {
-            URL url = new URL(s);
-
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Fk-Affiliate-Token", "1368e5baaf8e4bcdb442873d4aa8ef6e");
-            con.setRequestProperty("Fk-Affiliate-Id", "goingkilo");
-
-            int status = con.getResponseCode();
-
-
-            if (status == HttpURLConnection.HTTP_OK) {
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                return response.toString();
-
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (con != null) {
-                con.disconnect();
-            }
-        }
-        return "";
-    }
-
-
-    public static void main(String[] args) throws SocketTimeoutException {
-        List<Category> a = categories(null, null);
-        for (Category s : a) {
-            System.out.println(s.getTitle());
-            System.out.println(s.getUrl());
-        }
-        List<Product> b = products(null, null, null, "desktopsURL");
-
-        for (Product x : b) {
-            System.out.println(x);
-        }
+    public List<Product> products( String category, String categoryURL, String sort) {
+        return products( category, categoryURL, sort, 0, 30);
     }
 
 }

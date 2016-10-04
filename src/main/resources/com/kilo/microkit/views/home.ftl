@@ -34,6 +34,11 @@
         .item-text {
 
         }
+        .filter {
+            border :solid 1px grey;
+            border-radius: 5px;
+            margin-left:3px;
+        }
 
     </style>
 
@@ -56,7 +61,19 @@
             window.open( x);
         }
 
-        function a_cat(x) {
+        function a_sortby(x) {
+            console.log('redirecting to ' + x);
+            if( $('#sel_cat').val() != undefined) {
+                var catg = $('#sel_cat').val();
+                document.location = './a?sort=' + x + '&category=' + catg;
+                console.log('redirecting to ' + x + "/" + catg);
+            }
+            else {
+                document.location = './a?sort=' + x ;
+            }
+        }
+
+        function get_category(x) {
             console.log('call for  ' + x);
             document.location = './a?category=' + x;
         }
@@ -82,7 +99,7 @@
         </div>
         <ul class="nav navbar-nav">
             <li class="active"><a href="#" onclick="javascript:go_home()">Products</a></li>
-            <li><a href="#">Deals & Offers</a></li>
+            <li><a href="#" >Deals & Offers</a></li>
             <li><a href="#">About</a></li>
 
         </ul>
@@ -114,7 +131,7 @@
         <div class="col-sm-2">
         <#list categories as c>
             <div class=".btn-group-vertica">
-                <button type="button" class="btn btn-block catg" id="${c.title}" onclick="javascript:a_cat('${c.title}')">
+                <button type="button" class="btn btn-block catg" id="${c.title}" onclick="javascript:get_category('${c.title}')">
                 ${c.displayName}
                 </button>
             </div>
@@ -127,20 +144,23 @@
                 </div>
                 <div class="col-sm-11">
                     <label>Sort by</label>
-                    <label>Brand </label>
-                    <a href="#">Price - low to high</a>
-                    <a href="#">Price - high to low</a>
+
+                    <a href="#" class="filter" onclick="javascript:a_sortby('brand')">Brand</a>
+                    <a href="#" class="filter" onclick="javascript:a_sortby('pricel')">Price - low to high</a>
+                    <a href="#" class="filter" onclick="javascript:a_sortby('priceh')">Price - high to low</a>
                     <div style="border:solid 1px #e6e6e6;margin:3px;"></div>
 
                 </div>
             </div>
 
             <#list products?chunk(3) as p3>
+
             <div class="row">
                 <#list p3 as p>
                 <div class="col-sm-4">
                     <table class="table table-striped" data-toggle="tooltip" title="${p.desc}">
                         <tr>
+                            <input type="hidden" id="sel_cat" value="${p.category}"/>
                             <td id="item-text">${p.title}</td>
                             <td>
                                 <img src="${p.image}" style="max-height: 100%; max-width: 100%" onload="javascript:a_resize()"/>

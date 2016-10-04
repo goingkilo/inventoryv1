@@ -30,9 +30,7 @@ public class RetailResource {
 
     String currentCategory = "laptops";
 
-    // this is local cache for the home page
-    List<Category> categories = null;
-    List<Product> products = null;
+    FlipkartProvider provider;
 
     public RetailResource(ProductDAO productDAO, CategoryDAO categoryDAO, Client client) {
 
@@ -40,23 +38,19 @@ public class RetailResource {
         this.categoryDAO = categoryDAO;
 
         this.client = client;
+
+        provider = new FlipkartProvider(client, productDAO, categoryDAO);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
-    public HomeView home(@DefaultValue("laptops") @QueryParam("category") String category) {
+    public HomeView home(@DefaultValue("laptops") @QueryParam("category") String category,
+                         @DefaultValue("pricel") @QueryParam("sort") String sort) {
 
-        if (categories == null || categories.size() == 0 ) {
-            categories = FlipkartProvider.categories(client, categoryDAO);
-        }
-
-
-    //TODO: product management. can't be doing a getAll from db.need getProduct(category)
-        if (products == null || !category.equals(currentCategory)) {
-            currentCategory = category;
-            products = FlipkartProvider.products(client, productDAO, category, getCategoryURL(category));
-        }
+        List<Category> categories = provider.categories();
+        currentCategory = category;
+        List<Product> products = provider.products(category, getCategoryURL(categories, category), sort);
 
         return new HomeView(categories, products);
     }
@@ -68,20 +62,16 @@ public class RetailResource {
 
         List<Product> searchResults = null;
         try {
-            searchResults = FlipkartProvider.search(client, productDAO, searchTerm, 30);
-            //TODO: search results must be stored in ?
-            //
-        } catch (SocketTimeoutException e) {
-            e.printStackTrace();
+            searchResults = provider.search(searchTerm, 30);
+        } catch (SocketTimeoutException e1) {
+            e1.printStackTrace();
         }
-        //TODO: doing this too many times
-        if( categories == null ) {
-            categories = FlipkartProvider.categories(client, categoryDAO);
-        }
+
+        List<Category> categories = provider.categories();
         return new HomeView(categories, searchResults);
     }
 
-    private String getCategoryURL(String category){
+    private String getCategoryURL(List<Category> categories, String category){
         for ( Category c : categories) {
             if( c.getTitle().equalsIgnoreCase(category)) {
                 return c.getUrl();

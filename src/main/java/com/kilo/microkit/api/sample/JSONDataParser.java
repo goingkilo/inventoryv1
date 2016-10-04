@@ -35,7 +35,7 @@ public class JSONDataParser extends DataParser {
     public boolean initializeProductDirectory() throws AffiliateAPIException {
         boolean return_value = true;
         try {
-            // Query the API service and get back the result.
+            // Query the API service and httpGet back the result.
             String jsonData = queryService(affiliateBaseUrl);
 
             // Bookkeep the retrieved data in a local productDirectory Map.
@@ -47,7 +47,7 @@ public class JSONDataParser extends DataParser {
                 String category_name = (String)keys.next();
                 JSONObject variants = listing.getJSONObject(category_name).getJSONObject("availableVariants");
 
-                // Sort the variants and get the latest version
+                // Sort the variants and httpGet the latest version
                 Iterator v_iterator = variants.keys();
                 List<String> variant_keys = new ArrayList<String>();
                 while(v_iterator.hasNext()) {
@@ -55,7 +55,7 @@ public class JSONDataParser extends DataParser {
                 }
                 Collections.sort(variant_keys);
 
-                String category_url = variants.getJSONObject(variant_keys.get(0)).getString("get");
+                String category_url = variants.getJSONObject(variant_keys.get(0)).getString("httpGet");
 
                 productDirectory.put(category_name, category_url);
             }
