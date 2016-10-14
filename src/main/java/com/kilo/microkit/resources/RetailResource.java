@@ -85,6 +85,8 @@ public class RetailResource {
                 Collections.sort(products, new Comparator<Product>() {
                     @Override
                     public int compare(Product p1, Product p2) {
+                        int a = p1.getBrand().compareTo(p2.getBrand());
+                        if ( a != 0 ) return a;
                         return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
                     }
                 });
@@ -93,6 +95,8 @@ public class RetailResource {
                 Collections.sort(products, new Comparator<Product>() {
                     @Override
                     public int compare(Product p1, Product p2) {
+                        int a = p1.getBrand().compareTo(p2.getBrand());
+                        if ( a != 0 ) return a;
                         return Float.valueOf(p2.getPrice()).compareTo(Float.valueOf(p1.getPrice()));
                     }
                 });

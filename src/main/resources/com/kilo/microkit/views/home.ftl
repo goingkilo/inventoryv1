@@ -37,6 +37,7 @@
         .filter {
             border :solid 1px grey;
             border-radius: 5px;
+            padding:1px;
             margin-left:3px;
         }
 
@@ -100,23 +101,24 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="#" onclick="javascript:go_home()">Products</a></li>
             <li><a href="#" >Deals & Offers</a></li>
-            <li><a href="#">About</a></li>
+            <#--<li><a href="#">About</a></li>-->
 
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
             <ul class="nav navbar-nav navbar-left">
                 <li>
-                    <form style="margin-top:5px;" class="form-inline" action="/i/a" method="POST">
+                    <form style="margin-top:5px;" class="form-inline" action="/" method="POST">
                         <div class="form-group">
                             <input type="text" size="45" class="form-control" id="task" name="searchTerm">
                             <button type="submit" class="btn btn-default">Search</button>
                         </div>
                     </form>
                 </li>
+                <li>&nonbreakingspace;</li>
             </ul>
-            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <#--<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>-->
+            <#--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>-->
         </ul>
     </div>
 
@@ -148,7 +150,7 @@
                     <a href="#" class="filter" onclick="javascript:a_sortby('brand')">Brand</a>
                     <a href="#" class="filter" onclick="javascript:a_sortby('pricel')">Price - low to high</a>
                     <a href="#" class="filter" onclick="javascript:a_sortby('priceh')">Price - high to low</a>
-                    <div style="border:solid 1px #e6e6e6;margin:3px;"></div>
+                    <div style="margin-bottom:1px;border:solid 1px #e6e6e6;margin:3px;"></div>
 
                 </div>
             </div>
