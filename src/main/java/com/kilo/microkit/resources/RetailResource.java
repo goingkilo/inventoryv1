@@ -12,10 +12,6 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
@@ -146,48 +142,53 @@ public class RetailResource {
 
     @GET
     @Path("/robots.txt")
-    public Response robots() throws Exception {
-        String filename = "robots.txt";
-
-        StreamingOutput stream = new StreamingOutput() {
-
-            public void write(OutputStream output) throws IOException, WebApplicationException {
-
-                output.write( "".getBytes() );
-                output.flush();
-                output.close();
-            }
-        };
-        return Response
-                .ok(stream)
-                .header("Content-Disposition", "attachment;" +
-                        " filename=" + filename)
-                .header("Content-Transfer-Encoding", "text/plain")
-                .build();
+    @Produces(MediaType.TEXT_PLAIN)
+    public String robots() throws Exception {
+//        String filename = "robots.txt";
+//
+//        StreamingOutput stream = new StreamingOutput() {
+//
+//            public void write(OutputStream output) throws IOException, WebApplicationException {
+//
+//                output.write( "".getBytes() );
+//                output.flush();
+//                output.close();
+//            }
+//        };
+//        return Response
+//                .ok(stream)
+//                .header("Content-Disposition", "attachment;" +
+//                        " filename=" + filename)
+//                .header("Content-Transfer-Encoding", "text/plain")
+//                .build();
+        return "User-agent: *\n" +
+                "Allow: /";
 
     }
 
     @GET
     @Path("/google2d4d6500fac68f5f.html")
-    public Response goog_verify() throws Exception {
-        String filename = "google2d4d6500fac68f5f.html";
+    @Produces(MediaType.TEXT_PLAIN)
+    public String goog_verify() throws Exception {
+//        String filename = "google2d4d6500fac68f5f.html";
+//
+//        StreamingOutput stream = new StreamingOutput() {
+//
+//            public void write(OutputStream output) throws IOException, WebApplicationException {
+//
+//                output.write( "google-site-verification: google2d4d6500fac68f5f.html".getBytes() );
+//                output.flush();
+//                output.close();
+//            }
+//        };
+//        return Response
+//                .ok(stream)
+//                .header("Content-Disposition", "attachment;" +
+//                        " filename=" + filename)
+//                .header("Content-Transfer-Encoding", "text/plain")
+//                .build();
 
-        StreamingOutput stream = new StreamingOutput() {
-
-            public void write(OutputStream output) throws IOException, WebApplicationException {
-
-                output.write( "google-site-verification: google2d4d6500fac68f5f.html".getBytes() );
-                output.flush();
-                output.close();
-            }
-        };
-        return Response
-                .ok(stream)
-                .header("Content-Disposition", "attachment;" +
-                        " filename=" + filename)
-                .header("Content-Transfer-Encoding", "text/plain")
-                .build();
-
+        return "google-site-verification: google2d4d6500fac68f5f.html";
     }
 
 //    google2d4d6500fac68f5f.html
