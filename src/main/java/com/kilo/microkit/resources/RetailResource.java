@@ -12,6 +12,10 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
@@ -21,7 +25,7 @@ import java.util.*;
  * TODO: move all db calls to provider to delegate to db
  * TODO: provider to manage categories, products lifecycles
  */
-@Path("/a")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class RetailResource {
 
@@ -38,6 +42,7 @@ public class RetailResource {
 
         provider = new FlipkartProvider(client, productDAO, categoryDAO, metaInfoDAO);
     }
+
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -139,6 +144,28 @@ public class RetailResource {
         return null;
     }
 
+    @GET
+    @Path("/robots.txt")
+    public Response robots() throws Exception {
+        String filename = "robots.txt";
+
+        StreamingOutput stream = new StreamingOutput() {
+
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+
+                output.write( "".getBytes() );
+                output.flush();
+                output.close();
+            }
+        };
+        return Response
+                .ok(stream)
+                .header("Content-Disposition", "attachment;" +
+                        " filename=" + filename)
+                .header("Content-Transfer-Encoding", "text/plain")
+                .build();
+
+    }
 
 
 }

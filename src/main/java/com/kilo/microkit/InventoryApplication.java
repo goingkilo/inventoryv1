@@ -39,7 +39,7 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
 
         bootstrap.addBundle(hibernate);
         bootstrap.addBundle(new ViewBundle<InventoryConfiguration>());
-        bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
+        bootstrap.addBundle(new AssetsBundle("/assets", "/static/", "index.html"));
         bootstrap.addBundle(new MultiPartBundle());
     }
 

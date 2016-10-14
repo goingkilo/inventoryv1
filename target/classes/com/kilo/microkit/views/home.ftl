@@ -1,10 +1,10 @@
 <html>
 <head>
-    <script type="text/javascript" src="/js/jquery.js"></script>
-    <link rel="stylesheet" href="/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="/css/bootstrap.css">
-    <link rel="stylesheet" href="/css/fonts.css">
-    <script type="text/javascript" src="/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/fonts.css">
+    <script type="text/javascript" src="/static/js/bootstrap.js"></script>
 
 
     <style>
