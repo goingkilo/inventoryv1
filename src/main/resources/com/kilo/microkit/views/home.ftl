@@ -65,17 +65,17 @@
             console.log('redirecting to ' + x);
             if( $('#sel_cat').val() != undefined) {
                 var catg = $('#sel_cat').val();
-                document.location = './a?sort=' + x + '&category=' + catg;
+                document.location = './?sort=' + x + '&category=' + catg;
                 console.log('redirecting to ' + x + "/" + catg);
             }
             else {
-                document.location = './a?sort=' + x ;
+                document.location = './?sort=' + x ;
             }
         }
 
         function get_category(x) {
             console.log('call for  ' + x);
-            document.location = './a?category=' + x;
+            document.location = './?category=' + x;
         }
     </script>
     <script>

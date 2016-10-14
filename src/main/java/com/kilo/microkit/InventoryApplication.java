@@ -1,8 +1,10 @@
 package com.kilo.microkit;
 
 import com.kilo.microkit.db.dao.CategoryDAO;
+import com.kilo.microkit.db.dao.MetaInfoDAO;
 import com.kilo.microkit.db.dao.ProductDAO;
 import com.kilo.microkit.db.model.Category;
+import com.kilo.microkit.db.model.MetaInfo;
 import com.kilo.microkit.db.model.Product;
 import com.kilo.microkit.health.RetailHealthCheck;
 import com.kilo.microkit.resources.RetailResource;
@@ -25,7 +27,7 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
         return "Retail inventory from Inventory";
     }
 
-    private final HibernateBundle<InventoryConfiguration> hibernate = new HibernateBundle<InventoryConfiguration>(Product.class, Category.class) {
+    private final HibernateBundle<InventoryConfiguration> hibernate = new HibernateBundle<InventoryConfiguration>(Product.class, Category.class, MetaInfo.class) {
         @Override
         public DataSourceFactory getDataSourceFactory(InventoryConfiguration configuration) {
             return configuration.getDataSourceFactory();
@@ -47,10 +49,11 @@ public class InventoryApplication extends Application<InventoryConfiguration> {
 
         final ProductDAO productDAO = new ProductDAO(hibernate.getSessionFactory());
         final CategoryDAO categoryDAO     = new CategoryDAO(hibernate.getSessionFactory());
+        final MetaInfoDAO m = new MetaInfoDAO(hibernate.getSessionFactory());
 
         final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build(getName());
 
-        environment.jersey().register(new RetailResource(productDAO, categoryDAO ,client));
+        environment.jersey().register(new RetailResource(productDAO, categoryDAO, m ,client));
 
         final RetailHealthCheck basicHealthCheck = new RetailHealthCheck();
         environment.healthChecks().register( "basic", basicHealthCheck );

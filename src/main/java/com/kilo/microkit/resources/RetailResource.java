@@ -2,6 +2,7 @@ package com.kilo.microkit.resources;
 
 import com.kilo.microkit.core.provider.FlipkartProvider;
 import com.kilo.microkit.db.dao.CategoryDAO;
+import com.kilo.microkit.db.dao.MetaInfoDAO;
 import com.kilo.microkit.db.dao.ProductDAO;
 import com.kilo.microkit.db.model.Category;
 import com.kilo.microkit.db.model.Product;
@@ -12,7 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.SocketTimeoutException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kraghunathan on 9/16/16.
@@ -24,33 +25,83 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class RetailResource {
 
-    private final Client client;
-    private final ProductDAO productDAO;
-    private final CategoryDAO categoryDAO;
 
-    String currentCategory = "laptops";
+
+    List<Category> categories = new ArrayList<>();
+    Map<String,Category> categoryProductURLMap = new HashMap<String,Category>();
+
+    String currentCategory = "mobiles";
 
     FlipkartProvider provider;
 
-    public RetailResource(ProductDAO productDAO, CategoryDAO categoryDAO, Client client) {
+    public RetailResource(ProductDAO productDAO, CategoryDAO categoryDAO, MetaInfoDAO metaInfoDAO, Client client) {
 
-        this.productDAO = productDAO;
-        this.categoryDAO = categoryDAO;
-
-        this.client = client;
-
-        provider = new FlipkartProvider(client, productDAO, categoryDAO);
+        provider = new FlipkartProvider(client, productDAO, categoryDAO, metaInfoDAO);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
-    public HomeView home(@DefaultValue("laptops") @QueryParam("category") String category,
-                         @DefaultValue("pricel") @QueryParam("sort") String sort) {
+    public HomeView home(@DefaultValue("mobiles") @QueryParam("category") String categoryString,
+                         @DefaultValue("pricel") @QueryParam("sort") String sort,
+                         @DefaultValue("0") @QueryParam("offset") int offset,
+                         @DefaultValue("30") @QueryParam("limit") int limit) {
 
-        List<Category> categories = provider.categories();
-        currentCategory = category;
-        List<Product> products = provider.products(category, getCategoryURL(categories, category), sort);
+        // this section goes to cacher
+        if ( categories.size() == 0 ) {
+
+            categories = provider.categories();
+
+            categoryProductURLMap = new HashMap<>();
+
+            for (Category c : categories) categoryProductURLMap.put(c.getTitle(), c);
+
+            Collections.sort(categories, new Comparator<Category>() {
+                @Override
+                public int compare(Category c1, Category c2) {
+                    return c1.getTitle().compareTo(c2.getTitle());
+                }
+                // sort map by value
+                // Ordering<String> valueComparator = Ordering.natural().onResultOf(Functions.forMap(categories));
+                // categories = ImmutableSortedMap.copyOf(categories, valueComparator);
+
+            });
+        }
+        currentCategory = categoryString;
+
+        List<Product> products = provider.products(categoryProductURLMap.get(currentCategory));
+
+        switch( sort){
+            case "brand":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return p1.getBrand().compareTo(p2.getBrand());
+                    }
+                });
+                break;
+            case "pricel":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return Float.valueOf(p1.getPrice()).compareTo(Float.valueOf(p2.getPrice()));
+                    }
+                });
+                break;
+            case "priceh":
+                Collections.sort(products, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        return Float.valueOf(p2.getPrice()).compareTo(Float.valueOf(p1.getPrice()));
+                    }
+                });
+                break;
+        }
+
+
+        if( products.size() > ( offset + limit) ) {
+            products =  products.subList(offset, offset + limit);
+        }
 
         return new HomeView(categories, products);
     }
@@ -69,6 +120,14 @@ public class RetailResource {
 
         List<Category> categories = provider.categories();
         return new HomeView(categories, searchResults);
+    }
+
+    @GET
+    @UnitOfWork
+    @Path("/load")
+    //TODO:
+    public String load() {
+        return "OK";
     }
 
     private String getCategoryURL(List<Category> categories, String category){
