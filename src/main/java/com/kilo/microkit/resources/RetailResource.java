@@ -167,5 +167,30 @@ public class RetailResource {
 
     }
 
+    @GET
+    @Path("/google2d4d6500fac68f5f.html")
+    public Response goog_verify() throws Exception {
+        String filename = "google2d4d6500fac68f5f.html";
 
+        StreamingOutput stream = new StreamingOutput() {
+
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+
+                output.write( "google-site-verification: google2d4d6500fac68f5f.html".getBytes() );
+                output.flush();
+                output.close();
+            }
+        };
+        return Response
+                .ok(stream)
+                .header("Content-Disposition", "attachment;" +
+                        " filename=" + filename)
+                .header("Content-Transfer-Encoding", "text/plain")
+                .build();
+
+    }
+
+//    google2d4d6500fac68f5f.html
+//    google-site-verification: google2d4d6500fac68f5f.html
+//
 }
